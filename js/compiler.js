@@ -133,20 +133,24 @@ const tokens = [
   let ungetc = "";
   let current_sym = null;
   let index = 0;
-  let textarea = document.getElementById("myTextarea");
-
+  let getting_input;
+  let input="" ;
 function Runmain() {
   let what;
+  input="" ;
+  getting_input = document.getElementsByClassName("CodeMirror-line");
+  for(let i=0;i<getting_input.length;i++){
+    input+=(getting_input[i].textContent);
+  }
   current_char = "";
   ungetc = "";
   current_sym = null;
   index = 0;
-  textarea = document.getElementById("myTextarea");
   try{
     PROGRAM();
     current_sym = next_sym();
   
-  if (current_char !== "") {
+  if (current_char !== undefined) {
     console.log("The program should not contain anything else after the transition table ! " + current_char);
   }
   else console.log("The Program is well executed!!");
@@ -162,7 +166,7 @@ function Runmain() {
 
 function read_char() {
   let unget = current_char;
-  current_char = textarea.value.charAt(index++); 
+  current_char = input[index++];
   return unget;
 }
 
