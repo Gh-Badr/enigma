@@ -1,0 +1,12 @@
+
+.tape-cell{
+    fill: white;
+    stroke: rgb(113, 113, 113);
+    stroke-width: 1px;
+  }
+  .tape-container{
+    width: 50%;
+  }
+  .tape{
+    width: 100%;
+  }

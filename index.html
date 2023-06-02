@@ -6,12 +6,9 @@
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.13/codemirror.min.css" />
   <link href="css/styles.css">
   <link href="css/custom-syntax.css" rel="stylesheet">
+  <link href="css/TapeV.css" rel="stylesheet">
   <style>
-    .tape-cell{
-      fill: white;
-      stroke: black;
-      stroke-width: 1px;
-    }
+
   </style>
   
   <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.13/codemirror.min.js"></script>
@@ -27,9 +24,11 @@
 <body>
   <div><h1> Code </h1></div>
   <div id="code-editor"></div>
-  <div id="tape-container">
-    <svg id="tape"></svg>
+  <div id="tape-container" class="tape-container">
+    <svg id="tape" class="tape"></svg>
   </div>
+  <script src="/css/Js/custom-syntax.js"></script>
+  <script src="js/TapeV.js"></script>
   <script src="js/custom-syntax.js"></script>
 </body>
 </html>
