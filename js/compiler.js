@@ -129,39 +129,64 @@ const tokens = [
   "STATE_ID_TOKEN",
 ];
 
+
+//Global declarations
+
   let current_char = "";
   let ungetc = "";
   let current_sym = null;
   let index = 0;
   let getting_input;
   let input="" ;
+  let declarativeStates=[];
+  let dependingStates=[];
+
+
+
+
+//Main function
+
 function Runmain() {
-  let what;
+
   input="" ;
   getting_input = document.getElementsByClassName("CodeMirror-line");
+
+  declarativeStates=[];
+  dependingStates=[];
+
   for(let i=0;i<getting_input.length;i++){
     input+=(getting_input[i].textContent);
   }
+
+  input= input.split(' ').join('').split('\'\'').join('\' \'');
+  // console.log(input);
+
   current_char = "";
   ungetc = "";
   current_sym = null;
   index = 0;
   try{
+
     PROGRAM();
     current_sym = next_sym();
+
   
-  if (current_char !== undefined) {
-    console.log("The program should not contain anything else after the transition table ! " + current_char);
-  }
-  else console.log("The Program is well executed!!");
-  }  
-  catch (error) {
+    if (index!=input.length+1) {
+      console.log("The program should not contain anything else after the transition table ! " + current_char);
+    }
+    else console.log("The Program is well executed!!");
+
+    stateChecker();
+
+  }catch (error) {
     console.log(error);
   }
 
-  
   return 0;
 }
+
+
+//Lexical analysis
 
 
 function read_char() {
@@ -186,11 +211,13 @@ function is_blank(c){
 function next_sym() {
   let token;
   let keyWord = "";
+
   let inputString = "";
   let character = "";
   let i = 0;
   let j = 0;
   let k = 0;
+
   
   read_char();
   
@@ -213,8 +240,12 @@ function next_sym() {
       else if (keyWord.toUpperCase() === "LEFT") token = CODE_LEX.LEFT_TOKEN;
     }
     index--;
-    console.log(keyWord);
+
+    //semantic action
+    if(token===STATE_ID_TOKEN) stateCollector(keyWord);
+
     return token;
+
   } else {
     switch (current_char) {
       case '\"':
@@ -283,82 +314,83 @@ function next_sym() {
 }
 
 
-function AfficherToken(token) {
+function showToken(token) {
   switch (token) {
     case CODE_LEX.INPUT_TOKEN:
       console.log("INPUT_TOKEN");
-      break;
+      return "INPUT_TOKEN";
     case CODE_LEX.BLANK_TOKEN:
       console.log("BLANK_TOKEN");
-      break;
+      return "BLANK_TOKEN";
     case CODE_LEX.START_STATE_TOKEN:
       console.log("START_STATE_TOKEN");
-      break;
+      return "START_STATE_TOKEN";
     case CODE_LEX.TABLE_TOKEN:
       console.log("TABLE_TOKEN");
-      break;
+      return "TABLE_TOKEN";
     case CODE_LEX.INPUT_STRING_TOKEN:
       console.log("INPUT_STRING_TOKEN");
-      break;
+      return "INPUT_STRING_TOKEN";
     case CODE_LEX.CHARACTER_TOKEN:
       console.log("CHARACTER_TOKEN");
-      break;
+      return "CHARACTER_TOKEN";
     case CODE_LEX.EQUAL_TOKEN:
       console.log("EQUAL_TOKEN");
-      break;
+      return "EQUAL_TOKEN";
     case CODE_LEX.COLON_TOKEN:
       console.log("COLON_TOKEN");
-      break;
+      return "COLON_TOKEN";
     case CODE_LEX.OPEN_PARA_TOKEN:
       console.log("OPEN_PARA_TOKEN");
-      break;
+      return "OPEN_PARA_TOKEN";
     case CODE_LEX.CLOSE_PARA_TOKEN:
       console.log("CLOSE_PARA_TOKEN");
-      break;
+      return "CLOSE_PARA_TOKEN";
     case CODE_LEX.OPEN_BRACKET_TOKEN:
       console.log("OPEN_BRACKET_TOKEN");
-      break;
+      return "OPEN_BRACKET_TOKEN";
     case CODE_LEX.CLOSE_BRACKET_TOKEN:
       console.log("CLOSE_BRACKET_TOKEN");
-      break;
+      return "CLOSE_BRACKET_TOKEN";
     case CODE_LEX.OPEN_BRACES_TOKEN:
       console.log("OPEN_BRACES_TOKEN");
-      break;
+      return "OPEN_BRACES_TOKEN";
     case CODE_LEX.CLOSE_BRACES_TOKEN:
       console.log("CLOSE_BRACES_TOKEN");
-      break;
+      return "CLOSE_BRACES_TOKEN";
     case CODE_LEX.COMMA_TOKEN:
       console.log("COMMA_TOKEN");
-      break;
+      return "COMMA_TOKEN";
     case CODE_LEX.SC_TOKEN:
       console.log("SC_TOKEN");
-      break;
+      return "SC_TOKEN";
     case CODE_LEX.WRITE_TOKEN:
       console.log("WRITE_TOKEN");
-      break;
+      return "WRITE_TOKEN";
     case CODE_LEX.RIGHT_TOKEN:
       console.log("RIGHT_TOKEN");
-      break;
+      return "RIGHT_TOKEN";
     case CODE_LEX.LEFT_TOKEN:
       console.log("LEFT_TOKEN");
-      break;
+      return "LEFT_TOKEN";
     case CODE_LEX.STATE_ID_TOKEN:
       console.log("STATE_ID_TOKEN");
-      break;
+      return "STATE_ID_TOKEN";
     case CODE_LEX.ERROR_TOKEN:
       console.log("ERROR_TOKEN");
       throw new Error("An error token was encountered");
-      break;
+    }
   }
-}
+
+
+
+//Syntactic analysis
 
 function testSym(expectedCode, errorCode) {
   if (current_sym === expectedCode) {
     current_sym = next_sym();
   } else {
-    ERROR(errorCode);
-    AfficherToken(expectedCode);
-    throw new Error("An error token was encountered");
+    throw new Error("Syntax error : expected "+showToken(expectedCode));
   }
 }
 
@@ -405,8 +437,7 @@ function TABLE_STATEMENT() {
 
   if (current_sym !== CLOSE_BRACES_TOKEN) {
     ERROR(CLOSE_BRACES_TOKEN_ERROR);
-    AfficherToken(CLOSE_BRACES_TOKEN_ERROR);
-    throw new Error("An error token was encountered");
+    throw new Error("Syntax error : expected "+showToken(CLOSE_BRACES_TOKEN_ERROR));
   }
 }
 
@@ -452,10 +483,7 @@ function CHARACTERS() {
     CHARACTER();
     testSym(CLOSE_BRACKET_TOKEN, CLOSE_BRACKET_TOKEN_ERROR);
   } else {
-    ERROR(CHARACTER_TOKEN_ERROR);
-    AfficherToken(CHARACTER_TOKEN);
-    ERROR(OPEN_BRACKET_TOKEN_ERROR);
-    AfficherToken(OPEN_BRACKET_TOKEN);
+    throw new Error("Syntax error : expected "+showToken(CHARACTER_TOKEN)+" or "+showToken(OPEN_BRACKET_TOKEN));
   }
 }
 
@@ -476,13 +504,7 @@ function ACTIONS() {
     ACTION();
     testSym(CLOSE_PARA_TOKEN, CLOSE_PARA_TOKEN_ERROR);
   } else {
-    ERROR(RIGHT_TOKEN_ERROR);
-    AfficherToken(RIGHT_TOKEN);
-    ERROR(LEFT_TOKEN_ERROR);
-    AfficherToken(LEFT_TOKEN);
-    ERROR(OPEN_PARA_TOKEN_ERROR);
-    AfficherToken(OPEN_PARA_TOKEN);
-    throw new Error("An error token was encountered");
+    throw new Error("Syntax error : expected "+showToken(RIGHT_TOKEN)+" or "+showToken(LEFT_TOKEN)+" or "+showToken(OPEN_PARA_TOKEN));
   }
 }
 
@@ -504,11 +526,7 @@ function DIRECTION() {
   if (current_sym === RIGHT_TOKEN || current_sym === LEFT_TOKEN) {
     current_sym = next_sym();
   } else {
-    ERROR(RIGHT_TOKEN_ERROR);
-    AfficherToken(RIGHT_TOKEN);
-    ERROR(LEFT_TOKEN_ERROR);
-    AfficherToken(LEFT_TOKEN);
-    throw new Error("An error token was encountered");
+    throw new Error("Syntax error : expected "+ showToken(RIGHT_TOKEN)+" or "+showToken(LEFT_TOKEN));
   }
 }
 
@@ -519,6 +537,32 @@ function TO_STATE() {
   }
 }
 
-function ERROR(tokenError) {
-  console.log("There's an error here!");
+
+
+//Semantic analysis
+
+function stateCollector(stateID){
+
+
+  if(input[index]==='{'){
+    declarativeStates.push(stateID);
+    return;
+  } 
+  dependingStates.push(stateID);
+
+
 }
+
+function stateChecker(){
+
+  dependingStates.forEach(function(dependingState) {
+    isDeclared = false;
+    declarativeStates.forEach(function(declarativeState) {
+      if(dependingState==declarativeState) isDeclared = true ;
+      
+    });
+    if(isDeclared==false) throw new Error("The state "+dependingState+" is not declared in the transition table");
+  });
+
+}
+
