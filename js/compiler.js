@@ -140,6 +140,18 @@ const tokens = [
   let input="" ;
   let declarativeStates=[];
   let dependingStates=[];
+  
+  let currentStateIndex=-1;
+  let currentTransitionIndex=-1;
+
+//Results to be returned
+  let inputString="";
+  let blank;
+  let startState;
+  let finalStates=[];
+  
+
+  
 
 
 
@@ -153,6 +165,9 @@ function Runmain() {
 
   declarativeStates=[];
   dependingStates=[];
+  finalStates=[]
+  currentStateIndex=-1;
+  inputString="";
 
   for(let i=0;i<getting_input.length;i++){
     input+=(getting_input[i].textContent);
@@ -178,11 +193,18 @@ function Runmain() {
 
     stateChecker();
 
+    console.log(finalStates);
+
+  let machine = new Machine(inputString,blank,startState,finalStates);
+  console.log(machine);
+
+  return machine;
+
   }catch (error) {
     console.log(error);
   }
 
-  return 0;
+  
 }
 
 
@@ -212,7 +234,7 @@ function next_sym() {
   let token;
   let keyWord = "";
 
-  let inputString = "";
+
   let character = "";
   let i = 0;
   let j = 0;
@@ -249,7 +271,7 @@ function next_sym() {
   } else {
     switch (current_char) {
       case '\"':
-        inputString += current_char;
+        // inputString += current_char;
         read_char();
         
         while (current_char !== '\"' && current_char !== null) {
@@ -259,8 +281,7 @@ function next_sym() {
         
         if (current_char === null) return token = CODE_LEX.ERROR_TOKEN;
         
-        inputString += current_char;
-        inputString += '\0';
+        // inputString += current_char;
         
         return token = CODE_LEX.INPUT_STRING_TOKEN;
       
@@ -420,6 +441,7 @@ function BLANK_STATEMENT() {
   testSym(BLANK_TOKEN, BLANK_TOKEN_ERROR);
   testSym(EQUAL_TOKEN, EQUAL_TOKEN_ERROR);
   testSym(CHARACTER_TOKEN, CHARACTER_TOKEN_ERROR);
+  blank=input[index-3];
   testSym(SC_TOKEN, SC_TOKEN);
 }
 
@@ -427,6 +449,7 @@ function START_STATEMENT() {
   testSym(START_STATE_TOKEN, START_STATE_TOKEN_ERROR);
   testSym(EQUAL_TOKEN, EQUAL_TOKEN_ERROR);
   testSym(STATE_ID_TOKEN, STATE_ID_TOKEN_ERROR);
+  startState=dependingStates[dependingStates.length-1];
   testSym(SC_TOKEN, SC_TOKEN);
 }
 
@@ -462,6 +485,8 @@ function TABLE_ROW() {
 
 function TABLE_ROW_BODY() {
   if (current_sym === CHARACTER_TOKEN || current_sym === OPEN_BRACKET_TOKEN) {
+    finalStates[currentStateIndex].transitions.push(new Transition(finalStates[currentStateIndex].stateID));
+    currentTransitionIndex++;
     TRANSITION();
     TABLE_ROW_BODY();
   }
@@ -476,10 +501,12 @@ function TRANSITION() {
 
 function CHARACTERS() {
   if (current_sym === CHARACTER_TOKEN) {
+    finalStates[currentStateIndex].transitions[currentTransitionIndex].characters.push(input[index-3]);
     current_sym = next_sym();
   } else if (current_sym === OPEN_BRACKET_TOKEN) {
     current_sym = next_sym();
     testSym(CHARACTER_TOKEN, CHARACTER_TOKEN_ERROR);
+    finalStates[currentStateIndex].transitions[currentTransitionIndex].characters.push(input[index-3]);
     CHARACTER();
     testSym(CLOSE_BRACKET_TOKEN, CLOSE_BRACKET_TOKEN_ERROR);
   } else {
@@ -491,12 +518,17 @@ function CHARACTER() {
   if (current_sym === COMMA_TOKEN) {
     current_sym = next_sym();
     testSym(CHARACTER_TOKEN, CHARACTER_TOKEN_ERROR);
+    finalStates[currentStateIndex].transitions[currentTransitionIndex].characters.push(input[index-3]);
     CHARACTER();
   }
 }
 
 function ACTIONS() {
   if (current_sym === RIGHT_TOKEN || current_sym === LEFT_TOKEN) {
+
+    if(current_sym === RIGHT_TOKEN) finalStates[currentStateIndex].transitions[currentTransitionIndex].direction="right";
+    if(current_sym === LEFT_TOKEN) finalStates[currentStateIndex].transitions[currentTransitionIndex].direction="left";
+
     current_sym = next_sym();
   } else if (current_sym === OPEN_PARA_TOKEN) {
     current_sym = next_sym();
@@ -513,6 +545,7 @@ function WRITE() {
     current_sym = next_sym();
     testSym(COLON_TOKEN, COLON_TOKEN_ERROR);
     testSym(CHARACTER_TOKEN, CHARACTER_TOKEN_ERROR);
+    finalStates[currentStateIndex].transitions[currentTransitionIndex].write=input[index-3];
     testSym(COMMA_TOKEN, COMMA_TOKEN_ERROR);
   }
 }
@@ -524,6 +557,10 @@ function ACTION() {
 
 function DIRECTION() {
   if (current_sym === RIGHT_TOKEN || current_sym === LEFT_TOKEN) {
+
+    if(current_sym === RIGHT_TOKEN) finalStates[currentStateIndex].transitions[currentTransitionIndex].direction="right";
+    if(current_sym === LEFT_TOKEN) finalStates[currentStateIndex].transitions[currentTransitionIndex].direction="left";
+
     current_sym = next_sym();
   } else {
     throw new Error("Syntax error : expected "+ showToken(RIGHT_TOKEN)+" or "+showToken(LEFT_TOKEN));
@@ -534,20 +571,38 @@ function TO_STATE() {
   if (current_sym === COLON_TOKEN) {
     current_sym = next_sym();
     testSym(STATE_ID_TOKEN, STATE_ID_TOKEN_ERROR);
+    finalStates[currentStateIndex].transitions[currentTransitionIndex].target=dependingStates[dependingStates.length-1];
   }
 }
 
 
 
-//Semantic analysis
+//Semantic analysis and definition of final transitions
+
+function Transition(state, characters = [], write = null, direction, target = null) {
+  this.state = state;
+  this.characters = characters;
+  this.write = write;
+  this.direction = direction;
+  this.target = target;
+}
+
+function State(stateID, transitions=[]) {
+  this.stateID = stateID;
+  this.transitions = transitions;
+}
 
 function stateCollector(stateID){
 
 
   if(input[index]==='{'){
     declarativeStates.push(stateID);
+    finalStates.push(new State(stateID));
+    currentStateIndex++;
+    currentTransitionIndex=-1;
     return;
   } 
+  if(input[index]===';') startState=stateID;
   dependingStates.push(stateID);
 
 
@@ -564,5 +619,12 @@ function stateChecker(){
     if(isDeclared==false) throw new Error("The state "+dependingState+" is not declared in the transition table");
   });
 
+}
+
+function Machine(inputString=null,blank,startState,transitionTable){
+  this.inpuString=inputString;
+  this.blank=blank;
+  this.startState=startState;
+  this.transitionTable=transitionTable;
 }
 
