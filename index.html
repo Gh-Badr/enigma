@@ -4,32 +4,49 @@
   <meta charset="utf-8">
   <title>Enigma</title>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.13/codemirror.min.css" />
-  <link href="css/styles.css">
+  <link href="css/styles.css" rel="stylesheet">
   <link href="css/custom-syntax.css" rel="stylesheet">
-  <style>
-    .tape-cell{
-      fill: white;
-      stroke: black;
-      stroke-width: 1px;
-    }
-  </style>
-  
   <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.13/codemirror.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.13/mode/javascript/javascript.min.js"></script>
+  <script src="https://d3js.org/d3.v7.min.js"></script>
+<script src="https://cdn.jsdelivr.net/lodash/4.10.0/lodash.min.js"
+integrity="sha256-WplZqoBFo5rcW50YJBm/A1DRy7NnlMHTVDZBan+g2ZU=" crossorigin="anonymous"></script>
+<script> var lodash = _; </script>
+<link rel="stylesheet" href="https://unicons.iconscout.com/release/v4.0.0/css/line.css">
+
+<script src="https://cdn.jsdelivr.net/lodash/4.10.0/lodash.fp.min.js"
+integrity="sha256-21hyGphPmEWw6dEv1N50zj2CGTCph/CZOkIQHqGoTfs=" crossorigin="anonymous"></script>
   <!--  
     <script src="https://d3js.org/d3.v5.min.js" defer></script>
     <script src="https://d3js.org/d3-scale.v3.min.js" defer></script>
   -->
-  <script src="https://d3js.org/d3.v7.min.js"></script>
-  
+ <!-- <script src="https://d3js.org/d3.v7.min.js"></script>-->
+  <script src="js/custom-syntax.js"></script>
+  <script src="js/automata.js"></script>
   
 </head>
 <body>
-  <div><h1> Code </h1></div>
-  <div id="code-editor"></div>
-  <div id="tape-container">
-    <svg id="tape"></svg>
+  <nav>
+    <label class="logo"> Enigma </label>
+    
+  </nav>
+
+  <div class="container">
+    <div class="editor-container">
+      <h1> Code </h1>
+      <div id="code-editor"></div>
+    </div>
+
+    <!-- graph-->
+    <div class="graph-container">
+      <h1>Graph</h1>
+      <!-- Placeholder for the graph -->
+      <div id="graph-placeholder"></div>
+      
+      <svg id="svgContainer" width="600" height="500"></svg>
+    </div>
   </div>
-  <script src="js/custom-syntax.js"></script>
+  
+  
 </body>
 </html>
