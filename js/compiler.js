@@ -151,11 +151,6 @@ const tokens = [
   let finalStates=[];
   
 
-  
-
-
-
-
 //Main function
 
 function Runmain() {
@@ -174,7 +169,11 @@ function Runmain() {
   }
 
   input= input.split(' ').join('').split('\'\'').join('\' \'');
-  // console.log(input);
+
+  let output = new Output();
+
+
+
 
   current_char = "";
   ungetc = "";
@@ -183,25 +182,28 @@ function Runmain() {
   try{
 
     PROGRAM();
-    current_sym = next_sym();
-
-  
-    if (index!=input.length+1) {
-      console.log("The program should not contain anything else after the transition table ! " + current_char);
-    }
-    else console.log("The Program is well executed!!");
 
     stateChecker();
 
-    console.log(finalStates);
+    if (index!=input.length) {
+      console.log("Anything written after the transition table will be neglected !");
+      output.warning="Anything written after the transition table will be neglected !";
+    }
 
-  let machine = new Machine(inputString,blank,startState,finalStates);
-  console.log(machine);
+    let machine = new Machine(inputString,blank,startState,finalStates);
+    console.log(machine);
 
-  return machine;
+    output.machine=machine;
+
+    console.log(output);
+
+    return output;
 
   }catch (error) {
     console.log(error);
+    output.error=error;
+    console.log(output);
+    return output;
   }
 
   
@@ -329,89 +331,23 @@ function next_sym() {
       
       default:
         if (current_char !== null) return token = CODE_LEX.ERROR_TOKEN;
-        break;
+        //showErrorToken(ERROR_TOKEN); ???
     }
   }
 }
 
 
-function showToken(token) {
-  switch (token) {
-    case CODE_LEX.INPUT_TOKEN:
-      console.log("INPUT_TOKEN");
-      return "INPUT_TOKEN";
-    case CODE_LEX.BLANK_TOKEN:
-      console.log("BLANK_TOKEN");
-      return "BLANK_TOKEN";
-    case CODE_LEX.START_STATE_TOKEN:
-      console.log("START_STATE_TOKEN");
-      return "START_STATE_TOKEN";
-    case CODE_LEX.TABLE_TOKEN:
-      console.log("TABLE_TOKEN");
-      return "TABLE_TOKEN";
-    case CODE_LEX.INPUT_STRING_TOKEN:
-      console.log("INPUT_STRING_TOKEN");
-      return "INPUT_STRING_TOKEN";
-    case CODE_LEX.CHARACTER_TOKEN:
-      console.log("CHARACTER_TOKEN");
-      return "CHARACTER_TOKEN";
-    case CODE_LEX.EQUAL_TOKEN:
-      console.log("EQUAL_TOKEN");
-      return "EQUAL_TOKEN";
-    case CODE_LEX.COLON_TOKEN:
-      console.log("COLON_TOKEN");
-      return "COLON_TOKEN";
-    case CODE_LEX.OPEN_PARA_TOKEN:
-      console.log("OPEN_PARA_TOKEN");
-      return "OPEN_PARA_TOKEN";
-    case CODE_LEX.CLOSE_PARA_TOKEN:
-      console.log("CLOSE_PARA_TOKEN");
-      return "CLOSE_PARA_TOKEN";
-    case CODE_LEX.OPEN_BRACKET_TOKEN:
-      console.log("OPEN_BRACKET_TOKEN");
-      return "OPEN_BRACKET_TOKEN";
-    case CODE_LEX.CLOSE_BRACKET_TOKEN:
-      console.log("CLOSE_BRACKET_TOKEN");
-      return "CLOSE_BRACKET_TOKEN";
-    case CODE_LEX.OPEN_BRACES_TOKEN:
-      console.log("OPEN_BRACES_TOKEN");
-      return "OPEN_BRACES_TOKEN";
-    case CODE_LEX.CLOSE_BRACES_TOKEN:
-      console.log("CLOSE_BRACES_TOKEN");
-      return "CLOSE_BRACES_TOKEN";
-    case CODE_LEX.COMMA_TOKEN:
-      console.log("COMMA_TOKEN");
-      return "COMMA_TOKEN";
-    case CODE_LEX.SC_TOKEN:
-      console.log("SC_TOKEN");
-      return "SC_TOKEN";
-    case CODE_LEX.WRITE_TOKEN:
-      console.log("WRITE_TOKEN");
-      return "WRITE_TOKEN";
-    case CODE_LEX.RIGHT_TOKEN:
-      console.log("RIGHT_TOKEN");
-      return "RIGHT_TOKEN";
-    case CODE_LEX.LEFT_TOKEN:
-      console.log("LEFT_TOKEN");
-      return "LEFT_TOKEN";
-    case CODE_LEX.STATE_ID_TOKEN:
-      console.log("STATE_ID_TOKEN");
-      return "STATE_ID_TOKEN";
-    case CODE_LEX.ERROR_TOKEN:
-      console.log("ERROR_TOKEN");
-      throw new Error("An error token was encountered");
-    }
-  }
+
 
 
 
 //Syntactic analysis
 
-function testSym(expectedCode, errorCode) {
+function testSym(expectedCode) {
   if (current_sym === expectedCode) {
     current_sym = next_sym();
   } else {
-    throw new Error("Syntax error : expected "+showToken(expectedCode));
+    showError(expectedCode);
   }
 }
 
@@ -431,36 +367,35 @@ function INPUT() {
 }
 
 function INPUT_STATEMENT() {
-  testSym(INPUT_TOKEN, INPUT_TOKEN_ERROR);
-  testSym(EQUAL_TOKEN, EQUAL_TOKEN_ERROR);
-  testSym(INPUT_STRING_TOKEN, INPUT_STRING_TOKEN_ERROR);
-  testSym(SC_TOKEN, SC_TOKEN);
+  testSym(INPUT_TOKEN);
+  testSym(EQUAL_TOKEN);
+  testSym(INPUT_STRING_TOKEN);
+  testSym(SC_TOKEN);
 }
 
 function BLANK_STATEMENT() {
-  testSym(BLANK_TOKEN, BLANK_TOKEN_ERROR);
-  testSym(EQUAL_TOKEN, EQUAL_TOKEN_ERROR);
-  testSym(CHARACTER_TOKEN, CHARACTER_TOKEN_ERROR);
+  testSym(BLANK_TOKEN);
+  testSym(EQUAL_TOKEN);
+  testSym(CHARACTER_TOKEN);
   blank=input[index-3];
-  testSym(SC_TOKEN, SC_TOKEN);
+  testSym(SC_TOKEN);
 }
 
 function START_STATEMENT() {
-  testSym(START_STATE_TOKEN, START_STATE_TOKEN_ERROR);
-  testSym(EQUAL_TOKEN, EQUAL_TOKEN_ERROR);
-  testSym(STATE_ID_TOKEN, STATE_ID_TOKEN_ERROR);
+  testSym(START_STATE_TOKEN);
+  testSym(EQUAL_TOKEN);
+  testSym(STATE_ID_TOKEN);
   startState=dependingStates[dependingStates.length-1];
-  testSym(SC_TOKEN, SC_TOKEN);
+  testSym(SC_TOKEN);
 }
 
 function TABLE_STATEMENT() {
-  testSym(TABLE_TOKEN, TABLE_TOKEN_ERROR);
-  testSym(OPEN_BRACES_TOKEN, OPEN_BRACES_TOKEN_ERROR);
+  testSym(TABLE_TOKEN);
+  testSym(OPEN_BRACES_TOKEN);
   TABLE_BODY();
 
   if (current_sym !== CLOSE_BRACES_TOKEN) {
-    ERROR(CLOSE_BRACES_TOKEN_ERROR);
-    throw new Error("Syntax error : expected "+showToken(CLOSE_BRACES_TOKEN_ERROR));
+    showError(CLOSE_BRACES_TOKEN,STATE_ID_TOKEN);
   }
 }
 
@@ -470,17 +405,18 @@ function TABLE_BODY() {
 }
 
 function ROW() {
-  if (current_sym !== CLOSE_BRACES_TOKEN) {
+  if (current_sym !== CLOSE_BRACES_TOKEN && current_sym !== ERROR_TOKEN) {
     TABLE_ROW();
     ROW();
   }
 }
 
 function TABLE_ROW() {
-  testSym(STATE_ID_TOKEN, STATE_ID_TOKEN_ERROR);
-  testSym(OPEN_BRACES_TOKEN, OPEN_BRACES_TOKEN_ERROR);
+  testSym(STATE_ID_TOKEN);
+  testSym(OPEN_BRACES_TOKEN);
   TABLE_ROW_BODY();
-  testSym(CLOSE_BRACES_TOKEN, CLOSE_BRACES_TOKEN_ERROR);
+  if(current_sym !== CLOSE_BRACES_TOKEN) showError(CLOSE_BRACES_TOKEN,STATE_ID_TOKEN);
+  current_sym = next_sym();
 }
 
 function TABLE_ROW_BODY() {
@@ -494,30 +430,30 @@ function TABLE_ROW_BODY() {
 
 function TRANSITION() {
   CHARACTERS();
-  testSym(COLON_TOKEN, COLON_TOKEN_ERROR);
+  testSym(COLON_TOKEN);
   ACTIONS();
-  testSym(SC_TOKEN, SC_TOKEN_ERROR);
+  testSym(SC_TOKEN);
 }
 
 function CHARACTERS() {
   if (current_sym === CHARACTER_TOKEN) {
-    finalStates[currentStateIndex].transitions[currentTransitionIndex].characters.push(input[index-3]);
+    finalStates[currentStateIndex].transitions[currentTransitionIndex].characters.push(input[index-2]);
     current_sym = next_sym();
   } else if (current_sym === OPEN_BRACKET_TOKEN) {
     current_sym = next_sym();
-    testSym(CHARACTER_TOKEN, CHARACTER_TOKEN_ERROR);
+    testSym(CHARACTER_TOKEN);
     finalStates[currentStateIndex].transitions[currentTransitionIndex].characters.push(input[index-3]);
     CHARACTER();
-    testSym(CLOSE_BRACKET_TOKEN, CLOSE_BRACKET_TOKEN_ERROR);
+    testSym(CLOSE_BRACKET_TOKEN);
   } else {
-    throw new Error("Syntax error : expected "+showToken(CHARACTER_TOKEN)+" or "+showToken(OPEN_BRACKET_TOKEN));
+    showError(CHARACTER_TOKEN,OPEN_BRACKET_TOKEN);
   }
 }
 
 function CHARACTER() {
   if (current_sym === COMMA_TOKEN) {
     current_sym = next_sym();
-    testSym(CHARACTER_TOKEN, CHARACTER_TOKEN_ERROR);
+    testSym(CHARACTER_TOKEN);
     finalStates[currentStateIndex].transitions[currentTransitionIndex].characters.push(input[index-3]);
     CHARACTER();
   }
@@ -534,19 +470,19 @@ function ACTIONS() {
     current_sym = next_sym();
     WRITE();
     ACTION();
-    testSym(CLOSE_PARA_TOKEN, CLOSE_PARA_TOKEN_ERROR);
+    testSym(CLOSE_PARA_TOKEN);
   } else {
-    throw new Error("Syntax error : expected "+showToken(RIGHT_TOKEN)+" or "+showToken(LEFT_TOKEN)+" or "+showToken(OPEN_PARA_TOKEN));
+    showError(RIGHT_TOKEN,LEFT_TOKEN,OPEN_PARA_TOKEN);
   }
 }
 
 function WRITE() {
   if (current_sym === WRITE_TOKEN) {
     current_sym = next_sym();
-    testSym(COLON_TOKEN, COLON_TOKEN_ERROR);
-    testSym(CHARACTER_TOKEN, CHARACTER_TOKEN_ERROR);
+    testSym(COLON_TOKEN);
+    testSym(CHARACTER_TOKEN);
     finalStates[currentStateIndex].transitions[currentTransitionIndex].write=input[index-3];
-    testSym(COMMA_TOKEN, COMMA_TOKEN_ERROR);
+    testSym(COMMA_TOKEN);
   }
 }
 
@@ -563,14 +499,14 @@ function DIRECTION() {
 
     current_sym = next_sym();
   } else {
-    throw new Error("Syntax error : expected "+ showToken(RIGHT_TOKEN)+" or "+showToken(LEFT_TOKEN));
+    showError(RIGHT_TOKEN,LEFT_TOKEN);
   }
 }
 
 function TO_STATE() {
   if (current_sym === COLON_TOKEN) {
     current_sym = next_sym();
-    testSym(STATE_ID_TOKEN, STATE_ID_TOKEN_ERROR);
+    testSym(STATE_ID_TOKEN);
     finalStates[currentStateIndex].transitions[currentTransitionIndex].target=dependingStates[dependingStates.length-1];
   }
 }
@@ -601,7 +537,7 @@ function stateCollector(stateID){
     currentStateIndex++;
     currentTransitionIndex=-1;
     return;
-  } 
+  }
   if(input[index]===';') startState=stateID;
   dependingStates.push(stateID);
 
@@ -628,3 +564,63 @@ function Machine(inputString=null,blank,startState,transitionTable){
   this.transitionTable=transitionTable;
 }
 
+function Output(error=null,warning=null,machine=null){
+  this.warning=warning;
+  this.error=error;
+  this.machine=machine;
+}
+
+
+//Error handling
+function showErrorToken(token) {
+  switch (token) {
+    case CODE_LEX.INPUT_TOKEN:
+      return "'input'";
+    case CODE_LEX.BLANK_TOKEN:
+      return "'blank'";
+    case CODE_LEX.START_STATE_TOKEN:
+      return "'startState'";
+    case CODE_LEX.TABLE_TOKEN:
+      return "'table'";
+    case CODE_LEX.INPUT_STRING_TOKEN:
+      return "an input_string";
+    case CODE_LEX.CHARACTER_TOKEN:
+      return "a character";
+    case CODE_LEX.EQUAL_TOKEN:
+      return "=";
+    case CODE_LEX.COLON_TOKEN:
+      return ":";
+    case CODE_LEX.OPEN_PARA_TOKEN:
+      return "(";
+    case CODE_LEX.CLOSE_PARA_TOKEN:
+      return ")";
+    case CODE_LEX.OPEN_BRACKET_TOKEN:
+      return "[";
+    case CODE_LEX.CLOSE_BRACKET_TOKEN:
+      return "]";
+    case CODE_LEX.OPEN_BRACES_TOKEN:
+      return "{";
+    case CODE_LEX.CLOSE_BRACES_TOKEN:
+      return "}";
+    case CODE_LEX.COMMA_TOKEN:
+      return ",";
+    case CODE_LEX.SC_TOKEN:
+      return ";";
+    case CODE_LEX.WRITE_TOKEN:
+      return "'write'";
+    case CODE_LEX.RIGHT_TOKEN:
+      return "'right'";
+    case CODE_LEX.LEFT_TOKEN:
+      return "'left'";
+    case CODE_LEX.STATE_ID_TOKEN:
+      return "a state_identifier";
+    case CODE_LEX.ERROR_TOKEN:
+      throw new Error("An invalid token found !");
+    }
+  }
+
+  function showError(){
+    S="Syntax error : expected "+showErrorToken(arguments[0]);
+    for(let i=1;i<arguments.length;i++) S+=" or "+showErrorToken(arguments[i]);
+    throw new Error(S);
+  }
