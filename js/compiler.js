@@ -72,8 +72,7 @@ const ERROR_TOKEN = CODE_LEX.ERROR_TOKEN;
   
 
 //Main function
-
-function Runmain() {
+window.compile = function() {
   
   //getting the input code
   input="" ;
@@ -90,7 +89,9 @@ function Runmain() {
   for(let i=0;i<getting_input.length;i++){
     input+=(getting_input[i].textContent);
   }
-  input= input.split(' ').join('').split('\'\'').join('\' \'');
+  input= input.split(' ').join('').split(String.fromCharCode(8203)).join('').split('\'\'').join('\' \'');
+
+
 
   //initializing the output
   output = new Output();
@@ -518,7 +519,8 @@ function showErrorToken(token) {
     case CODE_LEX.STATE_ID_TOKEN:
       return "a state_identifier";
     case CODE_LEX.ERROR_TOKEN:
-      throw new Error("Lexical error : an invalid token found !");
+      return "a valid token";
+      // throw new Error("Lexical error : an invalid token found !");
     }
   }
 
