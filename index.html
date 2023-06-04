@@ -20,9 +20,20 @@
   <!-- code editor : -->
   <div id="code-editor"></div>
   <!-- tape : -->
-  <div id="tape-container" class="tape-container">
-    <svg id="tape" class="tape"></svg>
-  </div>
+    <!--svgs and buttons of the tape -->
+    <div id="container">
+      <!--svgs-->
+      <div id="tape-container" class="tape-container">
+        <svg id="tape" class="tape"></svg>
+        <svg id="head" class="head" ></svg>
+      </div>
+      <!--buttons-->
+      <div id="buttons" class="button-container">
+        <button id="stepButton">step right</button>
+        <button id="stepButtonL">step left</button>
+        <button id="run-allButton"> run all</button>
+      </div>
+    </div>
   <!-- js scripts : -->
   <script src="js/TapeV.js"></script>
   <script src="js/custom-syntax.js"></script>
