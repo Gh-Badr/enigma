@@ -1,207 +1,131 @@
+
+//defining the tokens
+
 const CODE_LEX = {
   INPUT_TOKEN: 0,
-  INPUT_TOKEN_ERROR: 1,
-  BLANK_TOKEN: 2,
-  BLANK_TOKEN_ERROR: 3,
-  START_STATE_TOKEN: 4,
-  START_STATE_TOKEN_ERROR: 5,
-  TABLE_TOKEN: 6,
-  TABLE_TOKEN_ERROR: 7,
-  INPUT_STRING_TOKEN: 8,
-  INPUT_STRING_TOKEN_ERROR: 9,
-  CHARACTER_TOKEN: 10,
-  CHARACTER_TOKEN_ERROR: 11,
-  EQUAL_TOKEN: 12,
-  EQUAL_TOKEN_ERROR: 13,
-  COLON_TOKEN: 14,
-  COLON_TOKEN_ERROR: 15,
-  OPEN_PARA_TOKEN: 16,
-  OPEN_PARA_TOKEN_ERROR: 17,
-  CLOSE_PARA_TOKEN: 18,
-  CLOSE_PARA_TOKEN_ERROR: 19,
-  OPEN_BRACKET_TOKEN: 20,
-  OPEN_BRACKET_TOKEN_ERROR: 21,
-  CLOSE_BRACKET_TOKEN: 22,
-  CLOSE_BRACKET_TOKEN_ERROR: 23,
-  OPEN_BRACES_TOKEN: 24,
-  OPEN_BRACES_TOKEN_ERROR: 25,
-  CLOSE_BRACES_TOKEN: 26,
-  CLOSE_BRACES_TOKEN_ERROR: 27,
-  COMMA_TOKEN: 28,
-  COMMA_TOKEN_ERROR: 29,
-  SC_TOKEN: 30,
-  SC_TOKEN_ERROR: 31,
-  WRITE_TOKEN: 32,
-  WRITE_TOKEN_ERROR: 33,
-  RIGHT_TOKEN: 34,
-  RIGHT_TOKEN_ERROR: 35,
-  LEFT_TOKEN: 36,
-  LEFT_TOKEN_ERROR: 37,
-  STATE_ID_TOKEN: 38,
-  STATE_ID_TOKEN_ERROR: 39,
-  ERROR_TOKEN: 40,
+  BLANK_TOKEN: 1,
+  START_STATE_TOKEN: 3,
+  TABLE_TOKEN: 4,
+  INPUT_STRING_TOKEN: 5,
+  CHARACTER_TOKEN: 6,
+  EQUAL_TOKEN: 7,
+  COLON_TOKEN: 8,
+  OPEN_PARA_TOKEN: 9,
+  CLOSE_PARA_TOKEN: 10,
+  OPEN_BRACKET_TOKEN: 11,
+  CLOSE_BRACKET_TOKEN: 12,
+  OPEN_BRACES_TOKEN: 13,
+  CLOSE_BRACES_TOKEN: 14,
+  COMMA_TOKEN: 15,
+  SC_TOKEN: 16,
+  WRITE_TOKEN: 17,
+  RIGHT_TOKEN: 18,
+  LEFT_TOKEN: 19,
+  STATE_ID_TOKEN: 20,
+  ERROR_TOKEN: 21
 };
 
 const INPUT_TOKEN = CODE_LEX.INPUT_TOKEN;
-const INPUT_TOKEN_ERROR = CODE_LEX.INPUT_TOKEN_ERROR;
 const BLANK_TOKEN = CODE_LEX.BLANK_TOKEN;
-const BLANK_TOKEN_ERROR = CODE_LEX.BLANK_TOKEN_ERROR;
 const START_STATE_TOKEN = CODE_LEX.START_STATE_TOKEN;
-const START_STATE_TOKEN_ERROR = CODE_LEX.START_STATE_TOKEN_ERROR;
 const TABLE_TOKEN = CODE_LEX.TABLE_TOKEN;
-const TABLE_TOKEN_ERROR = CODE_LEX.TABLE_TOKEN_ERROR;
 const INPUT_STRING_TOKEN = CODE_LEX.INPUT_STRING_TOKEN;
-const INPUT_STRING_TOKEN_ERROR = CODE_LEX.INPUT_STRING_TOKEN_ERROR;
 const CHARACTER_TOKEN = CODE_LEX.CHARACTER_TOKEN;
-const CHARACTER_TOKEN_ERROR = CODE_LEX.CHARACTER_TOKEN_ERROR;
 const EQUAL_TOKEN = CODE_LEX.EQUAL_TOKEN;
-const EQUAL_TOKEN_ERROR = CODE_LEX.EQUAL_TOKEN_ERROR;
 const COLON_TOKEN = CODE_LEX.COLON_TOKEN;
-const COLON_TOKEN_ERROR = CODE_LEX.COLON_TOKEN_ERROR;
 const OPEN_PARA_TOKEN = CODE_LEX.OPEN_PARA_TOKEN;
-const OPEN_PARA_TOKEN_ERROR = CODE_LEX.OPEN_PARA_TOKEN_ERROR;
 const CLOSE_PARA_TOKEN = CODE_LEX.CLOSE_PARA_TOKEN;
-const CLOSE_PARA_TOKEN_ERROR = CODE_LEX.CLOSE_PARA_TOKEN_ERROR;
 const OPEN_BRACKET_TOKEN = CODE_LEX.OPEN_BRACKET_TOKEN;
-const OPEN_BRACKET_TOKEN_ERROR = CODE_LEX.OPEN_BRACKET_TOKEN_ERROR;
 const CLOSE_BRACKET_TOKEN = CODE_LEX.CLOSE_BRACKET_TOKEN;
-const CLOSE_BRACKET_TOKEN_ERROR = CODE_LEX.CLOSE_BRACKET_TOKEN_ERROR;
 const OPEN_BRACES_TOKEN = CODE_LEX.OPEN_BRACES_TOKEN;
-const OPEN_BRACES_TOKEN_ERROR = CODE_LEX.OPEN_BRACES_TOKEN_ERROR;
 const CLOSE_BRACES_TOKEN = CODE_LEX.CLOSE_BRACES_TOKEN;
-const CLOSE_BRACES_TOKEN_ERROR = CODE_LEX.CLOSE_BRACES_TOKEN_ERROR;
 const COMMA_TOKEN = CODE_LEX.COMMA_TOKEN;
-const COMMA_TOKEN_ERROR = CODE_LEX.COMMA_TOKEN_ERROR;
 const SC_TOKEN = CODE_LEX.SC_TOKEN;
-const SC_TOKEN_ERROR = CODE_LEX.SC_TOKEN_ERROR;
 const WRITE_TOKEN = CODE_LEX.WRITE_TOKEN;
-const WRITE_TOKEN_ERROR = CODE_LEX.WRITE_TOKEN_ERROR;
 const RIGHT_TOKEN = CODE_LEX.RIGHT_TOKEN;
-const RIGHT_TOKEN_ERROR = CODE_LEX.RIGHT_TOKEN_ERROR;
 const LEFT_TOKEN = CODE_LEX.LEFT_TOKEN;
-const LEFT_TOKEN_ERROR = CODE_LEX.LEFT_TOKEN_ERROR;
 const STATE_ID_TOKEN = CODE_LEX.STATE_ID_TOKEN;
-const STATE_ID_TOKEN_ERROR = CODE_LEX.STATE_ID_TOKEN_ERROR;
 const ERROR_TOKEN = CODE_LEX.ERROR_TOKEN;
 
-
-const key_words = [
-  "input",
-  "blank",
-  "startState",
-  "table",
-  "input_string",
-  "character",
-  "equal",
-  "colon",
-  "open_para",
-  "close_para",
-  "open_bracket",
-  "close_bracket",
-  "open_braces",
-  "close_braces",
-  "comma",
-  "write",
-  "right",
-  "left",
-  "state_id",
-];
-
-const tokens = [
-  "INPUT_TOKEN",
-  "BLANK_TOKEN",
-  "START_STATE_TOKEN",
-  "TABLE_TOKEN",
-  "INPUT_STRING_TOKEN",
-  "CHARACTER_TOKEN",
-  "EQUAL_TOKEN",
-  "COLON_TOKEN",
-  "OPEN_PARA_TOKEN",
-  "CLOSE_PARA_TOKEN",
-  "OPEN_BRACKET_TOKEN",
-  "CLOSE_BRACKET_TOKEN",
-  "OPEN_BRACES_TOKEN",
-  "CLOSE_BRACES_TOKEN",
-  "COMMA_TOKEN",
-  "WRITE_TOKEN",
-  "RIGHT_TOKEN",
-  "LEFT_TOKEN",
-  "STATE_ID_TOKEN",
-];
 
 
 //Global declarations
 
-  let current_char = "";
-  let ungetc = "";
-  let current_sym = null;
-  let index = 0;
+  let current_char;
+  let ungetc;
+  let current_sym;
+  let index;
   let getting_input;
-  let input="" ;
-  let declarativeStates=[];
-  let dependingStates=[];
+  let input;
+
+  let declarativeStates;
+  let dependingStates;
   
+
   let currentStateIndex=-1;
   let currentTransitionIndex=-1;
-
-//Results to be returned
-  let inputString="";
+  let inputString;
   let blank;
   let startState;
-  let finalStates=[];
+  let finalStates;
+  let ouptut;
   
 
 //Main function
 
 function Runmain() {
-
+  
+  //getting the input code
   input="" ;
   getting_input = document.getElementsByClassName("CodeMirror-line");
 
+  //initializations
   declarativeStates=[];
   dependingStates=[];
   finalStates=[]
   currentStateIndex=-1;
   inputString="";
 
+  //formatting the input
   for(let i=0;i<getting_input.length;i++){
     input+=(getting_input[i].textContent);
   }
-
   input= input.split(' ').join('').split('\'\'').join('\' \'');
 
-  let output = new Output();
+  //initializing the output
+  output = new Output();
 
-
-
-
+  //another initializations
   current_char = "";
   ungetc = "";
   current_sym = null;
   index = 0;
+
+  //begin the compilation
   try{
 
+    //begin the LL1 parsing
     PROGRAM();
 
+    //semantic analysis
     stateChecker();
 
+    //setting warning message
     if (index!=input.length) {
       console.log("Anything written after the transition table will be neglected !");
       output.warning="Anything written after the transition table will be neglected !";
     }
 
+    //defining the output machine if no error
     let machine = new Machine(inputString,blank,startState,finalStates);
-    console.log(machine);
-
     output.machine=machine;
-
     console.log(output);
 
     return output;
 
   }catch (error) {
-    console.log(error);
-    output.error=error;
+    //if error
+    output.error=error.message;
     console.log(output);
     return output;
   }
@@ -211,7 +135,6 @@ function Runmain() {
 
 
 //Lexical analysis
-
 
 function read_char() {
   let unget = current_char;
@@ -236,13 +159,6 @@ function next_sym() {
   let token;
   let keyWord = "";
 
-
-  let character = "";
-  let i = 0;
-  let j = 0;
-  let k = 0;
-
-  
   read_char();
   
   while (is_blank(current_char)) {
@@ -273,30 +189,18 @@ function next_sym() {
   } else {
     switch (current_char) {
       case '\"':
-        // inputString += current_char;
         read_char();
-        
         while (current_char !== '\"' && current_char !== null) {
           inputString += current_char;
           read_char();
-        }
-        
-        if (current_char === null) return token = CODE_LEX.ERROR_TOKEN;
-        
-        // inputString += current_char;
-        
+        } 
+        if (current_char === null) return token = CODE_LEX.ERROR_TOKEN; 
         return token = CODE_LEX.INPUT_STRING_TOKEN;
       
       case '\'':
-        character += current_char;
         read_char();
-        character += current_char;
         read_char();
-        
         if (current_char !== '\'') return token = CODE_LEX.ERROR_TOKEN;
-        
-        character += current_char;
-        
         return token = CODE_LEX.CHARACTER_TOKEN;
       
       case '=':
@@ -330,8 +234,7 @@ function next_sym() {
         return token = CODE_LEX.SC_TOKEN;
       
       default:
-        if (current_char !== null) return token = CODE_LEX.ERROR_TOKEN;
-        //showErrorToken(ERROR_TOKEN); ???
+        if (current_char !== null) showErrorToken(ERROR_TOKEN);
     }
   }
 }
@@ -552,7 +455,7 @@ function stateChecker(){
       if(dependingState==declarativeState) isDeclared = true ;
       
     });
-    if(isDeclared==false) throw new Error("The state "+dependingState+" is not declared in the transition table");
+    if(isDeclared==false) throw new Error("Semantic error : the state "+dependingState+" is not declared in the transition table !");
   });
 
 }
@@ -615,12 +518,12 @@ function showErrorToken(token) {
     case CODE_LEX.STATE_ID_TOKEN:
       return "a state_identifier";
     case CODE_LEX.ERROR_TOKEN:
-      throw new Error("An invalid token found !");
+      throw new Error("Lexical error : an invalid token found !");
     }
   }
 
   function showError(){
     S="Syntax error : expected "+showErrorToken(arguments[0]);
     for(let i=1;i<arguments.length;i++) S+=" or "+showErrorToken(arguments[i]);
-    throw new Error(S);
+    throw new Error(S+" !");
   }
