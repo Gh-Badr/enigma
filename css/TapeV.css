@@ -1,0 +1,26 @@
+.tape-cell{
+  fill: white;
+  stroke: rgb(113, 113, 113);
+  stroke-width: 1px;
+}
+.tape-container{
+  width: 50%;
+  height: auto;
+  position: relative;
+}
+.tape{
+  width: 100%;
+  
+}
+.head{
+  width: 100%;
+  position: absolute;
+  top: 0;
+  left: 0;
+  z-index: 1;
+}
+.tape-head{
+  fill-opacity: 0%;
+  stroke: rgb(255, 137, 19);
+  stroke-width: 1px;
+}

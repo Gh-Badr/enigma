@@ -6,26 +6,18 @@
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.13/codemirror.min.css" />
   <link href="css/styles.css" rel="stylesheet">
   <link href="css/custom-syntax.css" rel="stylesheet">
-  <style>
-    .tape-cell{
-      fill: white;
-      stroke: black;
-      stroke-width: 1px;
-    }
-  </style>
-  
+  <link href="css/TapeV.css" rel="stylesheet">
+  <!-- codemirror.js library : -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.13/codemirror.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.13/mode/javascript/javascript.min.js"></script>
-  <!--  
-    <script src="https://d3js.org/d3.v5.min.js" defer></script>
-    <script src="https://d3js.org/d3-scale.v3.min.js" defer></script>
-  -->
+  <!-- d3.js  library :  -->
   <script src="https://d3js.org/d3.v7.min.js"></script>
   
   
 </head>
 <body>
   <div><h1> Code </h1></div>
+  <!-- code editor : -->
   <div id="code-editor"></div>
   <div class="message-container"></div>
   </br>
@@ -33,7 +25,26 @@
   <div id="tape-container">
     <svg id="tape"></svg>
   </div>
+  <!-- tape : -->
+    <!--svgs and buttons of the tape -->
+    <div id="container">
+      <!--svgs-->
+      <div id="tape-container" class="tape-container">
+        <svg id="tape" class="tape"></svg>
+        <svg id="head" class="head" ></svg>
+      </div>
+      <!--buttons-->
+      <div id="buttons" class="button-container">
+        <button id="stepButton">step</button>
+        <button id="run-allButton"> run </button>
+        <button id="stopButton"> stop runing </button>
+        <button id="reset-Button"> reset</button>
+      </div>
+    </div>
+  <!-- js scripts : -->
   
+ 
+  <script src="js/TapeV.js"></script>
   <script src="js/custom-syntax.js"></script>
   <script src="js/compiler.js"></script>
   <script src="js/messages.js"></script>
