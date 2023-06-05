@@ -20,6 +20,13 @@ var transitionIndex = 0 ;
 var lowestCell = -1 ; 
 var higherCell = cellNumber ; 
 
+//-------------------------------------------------------------------------------------
+
+
+function sleep(ms = 0) {
+  return new Promise(resolve => setTimeout(resolve, ms));
+}
+
 
 //-----------------------------------------------------------------------------------------------
 
@@ -112,6 +119,7 @@ function writeCharacter(currentCell,character){
     
   
 }
+
 function moveCursor(direction,blank){
     //selects all the elements inside the tape 
     var groups = d3.select('#tape').selectAll('g') ; 
@@ -158,6 +166,8 @@ function moveCursor(direction,blank){
 
         addTwoCells(blank);
 }
+
+
 // for changing the current cell Id we can also simply store the position and just creat new id isniead of extracting from the previous currentCellId  
 function stepExecute(currentCell,transition,blank){
     
@@ -169,29 +179,30 @@ function stepExecute(currentCell,transition,blank){
         moveCursor(direction,blank) ; 
     }
 }
-function executeAll(currentState,transitionTable,currentCell,blank,counter){
-    
-  if(counter==20) return;
 
-  let currentTransition=findTransition(transitionTable,currentState,currentCell);
+async function executeAll(currentState,transitionTable,currentCell,blank,isStopped){
+    
+  if(isStopped==true) return;
+
+  var currentTransition=findTransition(transitionTable,currentState,currentCell);
   console.log(currentTransition);
 
   if(currentTransition==null) return;
 
   stepExecute(currentCell,currentTransition,blank);
+
   currentCell = d3.select("#tape").select('#'+currentCellId) ; 
+  await sleep(200);
 
-  counter++;
 
-
-  if(currentTransition.target==null) executeAll(currentState,transitionTable,currentCell,blank,counter);
-  else executeAll(currentTransition.target,transitionTable,currentCell,blank,counter);
+  if(currentTransition.target==null) executeAll(currentState,transitionTable,currentCell,blank,isStopped);
+  else executeAll(currentTransition.target,transitionTable,currentCell,blank,isStopped);
   
 }
 
 function findTransition(transitionTable,currentState,currentCell){
 
-  let outputTransition;
+  var outputTransition;
 
   transitionTable.forEach( function(state){
     if(state.stateID==currentState){
@@ -205,8 +216,3 @@ function findTransition(transitionTable,currentState,currentCell){
   });
   return outputTransition;
 }
-
-
-
-
-
