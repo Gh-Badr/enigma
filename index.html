@@ -4,7 +4,7 @@
   <meta charset="utf-8">
   <title>Enigma</title>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.13/codemirror.min.css" />
-  <link href="css/styles.css">
+  <link href="css/styles.css" rel="stylesheet">
   <link href="css/custom-syntax.css" rel="stylesheet">
   <link href="css/TapeV.css" rel="stylesheet">
   <!-- codemirror.js library : -->
@@ -19,6 +19,12 @@
   <div><h1> Code </h1></div>
   <!-- code editor : -->
   <div id="code-editor"></div>
+  <div class="message-container"></div>
+  </br>
+  <button onclick="main()">Run</button>
+  <div id="tape-container">
+    <svg id="tape"></svg>
+  </div>
   <!-- tape : -->
     <!--svgs and buttons of the tape -->
     <div id="container">
@@ -36,8 +42,12 @@
       </div>
     </div>
   <!-- js scripts : -->
+  
+ 
   <script src="js/TapeV.js"></script>
   <script src="js/custom-syntax.js"></script>
-  <script src="js/test.js"></script>
+  <script src="js/compiler.js"></script>
+  <script src="js/messages.js"></script>
+  <script src="js/main.js"></script>
 </body>
 </html>

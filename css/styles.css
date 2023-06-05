@@ -4,4 +4,21 @@
     width: 100%;
     height: 300px;
   }
-  
+
+/*For messages display*/
+
+.message-container {
+  padding: 30px 10px;
+}
+
+.warning-message{
+  background-color: #FFE569;
+}
+
+.error-message {
+  background-color: #F55050;
+}
+
+.valid-message {
+  background-color: #7DCE13;
+}
