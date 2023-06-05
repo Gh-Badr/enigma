@@ -13,11 +13,13 @@ var cellNumber = Math.floor(a); // how many cells to insert
 var tapeHead = Math.floor(cellNumber/2); // position of the tape head, it is the initail position where the execution is gonna start from 
 
 var firstCellId = 'g' + tapeHead.toString(); 
-var currentCellId = firstCellId ; 
+var currentCellId = firstCellId ;
+var transitionIndex = 0 ;   
 
 // needed to insert cells at the each end of tape : 
 var lowestCell = -1 ; 
 var higherCell = cellNumber ; 
+
 
 //-----------------------------------------------------------------------------------------------
 
@@ -104,72 +106,107 @@ function readCharacter(currentCell){
 }
 
 function writeCharacter(currentCell,character){
-  if(!text){
+  if (character !== null){
     currentCell.select('text').text(character) ; 
   }
-  return currentCell ; // ? 
+    
+  
 }
-
-function moveCursor(direction){
+function moveCursor(direction,blank){
     //selects all the elements inside the tape 
     var groups = d3.select('#tape').selectAll('g') ; 
-        groups.each(
+    var newX =  0 ;
+    
+        groups.each( // for each g element : 
             function(){
                 var grp = d3.select(this) ; 
                 var translate = grp.attr('transform').match(/translate\(([^)]+)\)/)[1].split(',');
-                if(direction=='right'){
-                    var newX = parseFloat(translate[0]) + cellWidth ;
-
-
-                    //changing the currentCellId to the next cell 
-                    var number = parseInt(currentCellId.slice(1), 10);
-                    var newNumber = number + 1; // next cell 
-                    // Create the new ID with the updated number
-                    currentCellId = 'g' + newNumber;
-                }
                 if(direction=='left'){
+                    var newX = parseFloat(translate[0]) + cellWidth ;
+                    
+                    
+                }
+                else if(direction=='right'){
                     var newX = parseFloat(translate[0]) - cellWidth ;
-
-                    //changing the currentCellId to the previous cell 
-                    var number = parseInt(currentCellId.slice(1), 10);
-                    var newNumber = number - 1; // previous cell 
-                    // Create the new ID with the updated number
-                    currentCellId = 'g' + newNumber;
                 }
                 else{
                     var newX = parseFloat(translate[0]) ; // let it be as it was 
                     // the current cell id stays the same 
+                   
+                    
                 }
                 grp.attr('transform','translate('+newX.toString()+')') ; 
+                
             }
         );  
+        if(direction === 'right'){
+          //changing the currentCellId to the next cell 
+          var number = parseInt(currentCellId.slice(1), 10);
+          var newNumber = number + 1; // next cell 
+          // Create the new ID with the updated number
+          currentCellId = 'g' + newNumber;
+          
+        }
+        if(direction === 'left'){
+          //changing the currentCellId to the previous cell 
+          var number = parseInt(currentCellId.slice(1), 10);
+          var newNumber = number - 1; // previous cell 
+          // Create the new ID with the updated number
+          currentCellId = 'g' + newNumber;
+        } 
+        transitionIndex++ ; 
+
+        addTwoCells(blank);
 }
 // for changing the current cell Id we can also simply store the position and just creat new id isniead of extracting from the previous currentCellId  
-function stepExecute(currentCell,transition){
+function stepExecute(currentCell,transition,blank){
     
     var characters = transition.characters;
-    var symbol = transition.write;
     var direction = transition.direction;
-    var cellContent = readCharacter(currentCell) ; 
 
-    if(Array.isArray(characters)&&characters.includes(cellContent)){
-        writeCharacter(currentCell,symbol) ; 
+    if(Array.isArray(characters)&&characters.includes(readCharacter(currentCell))){
+        writeCharacter(currentCell,transition.write) ; 
+        moveCursor(direction,blank) ; 
     }
-
-    moveCursor(direction) ; 
 }
-function executeAll(){
-  obj.transitionTable.forEach(transitionEntry => {
-    var stateID =  transitionEntry.stateID ; 
-    var transitions = transitionEntry.transitions
-    transitions.forEach(
-      function(transition) {
-        var currentCell = d3.select("#tape").select('#'+currentCellId) ;
-        stepExecute(currentCell,transition) ; 
-      }) ;
+function executeAll(currentState,transitionTable,currentCell,blank,counter){
+    
+  if(counter==20) return;
+
+  let currentTransition=findTransition(transitionTable,currentState,currentCell);
+  console.log(currentTransition);
+
+  if(currentTransition==null) return;
+
+  stepExecute(currentCell,currentTransition,blank);
+  currentCell = d3.select("#tape").select('#'+currentCellId) ; 
+
+  counter++;
+
+
+  if(currentTransition.target==null) executeAll(currentState,transitionTable,currentCell,blank,counter);
+  else executeAll(currentTransition.target,transitionTable,currentCell,blank,counter);
+  
+}
+
+function findTransition(transitionTable,currentState,currentCell){
+
+  let outputTransition;
+
+  transitionTable.forEach( function(state){
+    if(state.stateID==currentState){
+      state.transitions.forEach( function(transition){
+        if(Array.isArray(transition.characters)&&transition.characters.includes(readCharacter(currentCell))){
+          outputTransition = transition;
+        }
+  
+      });
+    }
   });
+  return outputTransition;
 }
 
-var b = ' ' ; var input = [1,1,0] ; 
-TapeVisualization(b,input) ; 
+
+
+
 
