@@ -8,6 +8,10 @@
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.13/codemirror.min.css" />
   <link href="css/styles.css" rel="stylesheet">
   <link href="css/custom-syntax.css" rel="stylesheet">
+  <link href="css/TapeV.css" rel="stylesheet">
+
+               
+  <!--for graph visualization -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.13/codemirror.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.13/mode/javascript/javascript.min.js"></script>
   <script src="https://d3js.org/d3.v5.min.js"></script>
@@ -18,28 +22,52 @@
 
   <script src="https://cdn.jsdelivr.net/lodash/4.10.0/lodash.fp.min.js"
           integrity="sha256-21hyGphPmEWw6dEv1N50zj2CGTCph/CZOkIQHqGoTfs=" crossorigin="anonymous"></script>
-  <!--
-    <script src="https://d3js.org/d3.v5.min.js" defer></script>
-    <script src="https://d3js.org/d3-scale.v3.min.js" defer></script>
-  -->
-  <!-- <script src="https://d3js.org/d3.v7.min.js"></script>-->
-  <script src="js/custom-syntax.js"></script>
-  <script src="js/automata.js"></script>
+  
+  <!-- codemirror.js library : -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.13/codemirror.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.13/mode/javascript/javascript.min.js"></script>
+  
+  <!-- d3.js  library :  -->
+  <script src="https://d3js.org/d3.v7.min.js"></script>
+  
 
 </head>
 <body>
-<nav>
-  <label class="logo"> <img src="enigma.png" alt="Enigma Logo"> Enigma</label>
+  
+  <nav>
+    <label class="logo"> <img src="enigma.png" alt="Enigma Logo"> Enigma</label>
+  </nav>
+  
+  <div class="container">
+  
+  <div><h1> Code </h1></div>
+  <!-- code editor : -->
+  <div id="code-editor"></div>
+  <div class="message-container"></div>
+  </br>
+  <button onclick="main()">Run</button>
+  <br>
 
-</nav>
 
-<div class="container">
-  <div class="editor-container">
-    <h1> Code </h1>
-    <div id="code-editor"></div>
-  </div>
+  <!-- tape : -->
+    <!--svgs and buttons of the tape -->
+    <div id="container">
+      <!--svgs-->
+      <div id="tape-container" class="tape-container">
+        <svg id="tape" class="tape"></svg>
+        <svg id="head" class="head" ></svg>
+      </div>
+      <!--buttons-->
+      <div id="buttons" class="button-container">
+        <button id="stepButton">step</button>
+        <button id="run-allButton"> run </button>
 
-  <!-- graph-->
+        <button id="reset-Button"> reset</button>
+      </div>
+    </div>
+  
+  
+    <!-- graph-->
   <div class="graph-container">
     <h1>Graph</h1>
     <!-- Placeholder for the graph -->
@@ -47,8 +75,16 @@
 
     <svg id="svgContainer" width="600" height="500"></svg>
   </div>
-</div>
-
-
+  
+  </div>
+  <!-- js scripts : -->
+  
+ 
+  <script src="js/TapeV.js"></script>
+  <script src="js/custom-syntax.js"></script>
+  <script src="js/compiler.js"></script>
+  <script src="js/messages.js"></script>
+  <script src="js/automata.js"></script>
+  <script src="js/main.js"></script>
 </body>
 </html>
