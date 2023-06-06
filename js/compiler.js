@@ -462,7 +462,7 @@ function stateChecker(){
 }
 
 function Machine(inputString=null,blank,startState,transitionTable){
-  this.inpuString=inputString;
+  this.inputString=inputString;
   this.blank=blank;
   this.startState=startState;
   this.transitionTable=transitionTable;

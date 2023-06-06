@@ -179,11 +179,8 @@ function stepExecute(currentCell,transition,blank){
         moveCursor(direction,blank) ; 
     }
 }
-
-async function executeAll(currentState,transitionTable,currentCell,blank,isStopped){
-    
-  if(isStopped==true) return;
-
+function executeAll(currentState,transitionTable,currentCell,blank){
+   
   var currentTransition=findTransition(transitionTable,currentState,currentCell);
   console.log(currentTransition);
 
@@ -192,12 +189,16 @@ async function executeAll(currentState,transitionTable,currentCell,blank,isStopp
   stepExecute(currentCell,currentTransition,blank);
 
   currentCell = d3.select("#tape").select('#'+currentCellId) ; 
-  await sleep(200);
 
+  if(!stopFlag){
+      setTimeout(function(){
+        if(currentTransition.target==null) executeAll(currentState,transitionTable,currentCell,blank);
+        else executeAll(currentTransition.target,transitionTable,currentCell,blank);
+      },500);
+  }else{
+    return;
+  } 
 
-  if(currentTransition.target==null) executeAll(currentState,transitionTable,currentCell,blank,isStopped);
-  else executeAll(currentTransition.target,transitionTable,currentCell,blank,isStopped);
-  
 }
 
 function findTransition(transitionTable,currentState,currentCell){
