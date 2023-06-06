@@ -49,6 +49,11 @@ function main() {
         currentTransition=null;
 
 
+        //test
+        console.log("The stright lines of q0 are : ",getAllSourcesof('accept'));
+        console.log(retrieveIds('q1'));
+
+
 
         //initializing the execution tape
         TapeVisualization(blankCharacter,initialInput);
