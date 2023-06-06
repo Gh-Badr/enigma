@@ -1,6 +1,6 @@
 var memory = [];
 
-document.addEventListener("DOMContentLoaded", function() {
+
   // Define the drawState function
   function drawState(states) {
     // Select the SVG container
@@ -87,8 +87,8 @@ document.addEventListener("DOMContentLoaded", function() {
           // console.log(getTargetState(stateId));
           // Update the loop arc for the current state
           updateLoopArc(stateId, centerX, centerY);
-          updateCurvLineRetour(stateId, getTargetState(stateId),centerX,centerY)
-          updateCurvLineAller(stateId, getTargetState(stateId),centerX,centerY)
+          updateCurvLineRetour(stateId, centerX,centerY)
+          updateCurvLineAller(stateId, centerX,centerY)
           return "translate(" + (d.x = x) + "," + (d.y = y) + ")";
         });
   }
@@ -126,13 +126,15 @@ document.addEventListener("DOMContentLoaded", function() {
   }
 
 
-  function updateCurvLineRetour(state, transition,newX,newY) {
+  function updateCurvLineRetour(state, newX,newY) {
     var svg = d3.select('#svgContainer');
     var firstPart,secondPart;
     for (let i = 0; i < memory.length; i++) {
       [firstPart, secondPart] = memory[i].split("DEL");
       if (firstPart === state) {
         var currentState = svg.select('#state_' + state);
+
+        
 
         var centerX = parseFloat(currentState.attr('transform').split('(')[1].split(',')[0]);
         var centerY = parseFloat(currentState.attr('transform').split('(')[1].split(',')[1].split(')')[0]);
@@ -160,7 +162,7 @@ document.addEventListener("DOMContentLoaded", function() {
     }
   }
 
-  function updateCurvLineAller(state, transition,newX,newY) {
+  function updateCurvLineAller(state,newX,newY) {
     var svg = d3.select('#svgContainer');
     var firstPart,secondPart;
     for (let i = 0; i < memory.length; i++) {
@@ -203,18 +205,18 @@ document.addEventListener("DOMContentLoaded", function() {
     for (var i = 0; i < transitions.length; i++) {
       var transition = transitions[i];
       // Check if the current state equals the target state
-      if (transition.currentState === transition.target) {
-        loopArc(transition.currentState, transition);
+      if (null == transition.target) {
+        loopArc(transition.state, transition);
 
       }
       else if (((curvId=hasReverseTransition(transition, transitions)).charAt(0))=="1" ) {
         curvId=curvId.substring(1);
         // alert(hi);
-        curvLineRetour(transition.currentState, transition,curvId);
+        curvLineRetour(transition.state, transition,curvId);
       }else if(((curvId=hasReverseTransition(transition, transitions)).charAt(0))=="2") {
         curvId=curvId.substring(1);
         // alert(hi);
-        curvLineAller(transition.currentState, transition,curvId);
+        curvLineAller(transition.state, transition,curvId);
       }
 
     }
@@ -224,16 +226,16 @@ document.addEventListener("DOMContentLoaded", function() {
     for (var i = 0; i < transitions.length; i++) {
       var reverseTransition = transitions[i];
       if (
-          reverseTransition.currentState === transition.target &&
-          reverseTransition.target === transition.currentState
-      ) { if(!memory.includes(reverseTransition.currentState + 'DEL' + transition.currentState))memory.push(reverseTransition.currentState + 'DEL' + transition.currentState);
-        if(memory.includes(transition.currentState + 'DEL' + reverseTransition.currentState))
-          return '1'+transition.currentState+ reverseTransition.currentState;
-        //console.log(reverseTransition.currentState+" and "+ transition.currentState);
-        return '2'+transition.currentState+ reverseTransition.currentState;
+          reverseTransition.state === transition.target &&
+          reverseTransition.target === transition.state
+      ) { if(!memory.includes(reverseTransition.state + 'DEL' + transition.state))memory.push(reverseTransition.state + 'DEL' + transition.state);
+        if(memory.includes(transition.state + 'DEL' + reverseTransition.state))
+          return '1'+transition.state+ reverseTransition.state;
+        //console.log(reverseTransition.state+" and "+ transition.state);
+        return '2'+transition.state+ reverseTransition.state;
       }
     }
-    return 3;
+    return '3';
   }
 
 
@@ -304,6 +306,8 @@ document.addEventListener("DOMContentLoaded", function() {
   function curvLineRetour(state, transition,curvId) {
     var svg = d3.select('#svgContainer');
     var currentState = svg.select('#state_' + state);
+
+    console.log(state);
 
     var centerX = parseFloat(currentState.attr('transform').split('(')[1].split(',')[0]);
     var centerY = parseFloat(currentState.attr('transform').split('(')[1].split(',')[1].split(')')[0]);
@@ -393,75 +397,64 @@ document.addEventListener("DOMContentLoaded", function() {
     svg.attr('href', '#' + pathId);
   }
 
-  // Define your states and transitions
-  var states = ['q3', 'q1', 'q2','hello'];
-  // Example transitions
-  var transitions = [
-    {
-      currentState: 'hello',
-      characters: ['0', '1'],
-      direction: 'R',
-      target: 'hello'
-    },
-    {
-      currentState: 'q2',
-      characters: ['0', '1'],
-      direction: 'R',
-      target: 'q2'
-    },
-    {
-      currentState: 'q1',
-      characters: ['0'],
-      direction: 'L',
-      target: 'q3'
-    },
-    {
-      currentState: 'q3',
-      characters: ['7','9'],
-      direction: 'R',
-      target: 'q1'
-    },
-    {
-      currentState: 'q2',
-      characters: ['6'],
-      direction: 'L',
-      target: 'q3'
-    },
-    {
-      currentState: 'q3',
-      characters: ['5','0'],
-      direction: 'R',
-      target: 'q2'
-    },
-    {
-      currentState: 'q2',
-      characters: ['4'],
-      direction: 'L',
-      target: 'hello'
-    },
-    {
-      currentState: 'hello',
-      characters: ['1'],
-      direction: 'R',
-      target: 'q2'
-    },
+  // // Define your states and transitions
+  // var states = ['q3', 'q1', 'q2','hello'];
+  // // Example transitions
+  // var transitions = [
+  //   {
+  //     currentState: 'hello',
+  //     characters: ['0', '1'],
+  //     direction: 'R',
+  //     target: 'hello'
+  //   },
+  //   {
+  //     currentState: 'q2',
+  //     characters: ['0', '1'],
+  //     direction: 'R',
+  //     target: 'q2'
+  //   },
+  //   {
+  //     currentState: 'q1',
+  //     characters: ['0'],
+  //     direction: 'L',
+  //     target: 'q3'
+  //   },
+  //   {
+  //     currentState: 'q3',
+  //     characters: ['7','9'],
+  //     direction: 'R',
+  //     target: 'q1'
+  //   },
+  //   {
+  //     currentState: 'q2',
+  //     characters: ['6'],
+  //     direction: 'L',
+  //     target: 'q3'
+  //   },
+  //   {
+  //     currentState: 'q3',
+  //     characters: ['5','0'],
+  //     direction: 'R',
+  //     target: 'q2'
+  //   },
+  //   {
+  //     currentState: 'q2',
+  //     characters: ['4'],
+  //     direction: 'L',
+  //     target: 'hello'
+  //   },
+  //   {
+  //     currentState: 'hello',
+  //     characters: ['1'],
+  //     direction: 'R',
+  //     target: 'q2'
+  //   },
 
 
-  ];
-  function getTargetState(currentState) {
-    for (let i = 0; i < transitions.length; i++) {
-      if (transitions[i].currentState === currentState) {
-        return transitions[i].target;
-      }
-    }
-  }
+  // ];
 
-  // Call the drawState function with your states
-  drawState(states);
 
-  // Call the drawTransition function with the transitions array
-  drawTransition(transitions);
+
 
   console.log(memory);
 
-});

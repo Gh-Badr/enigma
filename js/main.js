@@ -11,6 +11,8 @@ var currentCell;
 var currentState;
 var transition;
 
+var allTransitions;
+
 var stopFlag=false;
 var promise;
 
@@ -21,6 +23,9 @@ var reset = document.getElementById('reset-Button');
 
 //main 
 function main() {
+
+    document.getElementById("svgContainer").innerHTML="";
+
     let output = compile();
     if(output.error != null) displayMessage('error',output.error);
     else {
@@ -31,6 +36,15 @@ function main() {
         transitionTable=machine.transitionTable;
         startingState=machine.startState;
         currentState=startingState;
+
+        //draw the graph
+        drawState(declarativeStates);
+        allTransitions=[];
+        getAllTransitions();
+        console.log(allTransitions);
+        drawTransition(allTransitions);
+
+
 
         //initializing the execution tape
         TapeVisualization(blankCharacter,initialInput);
@@ -71,6 +85,8 @@ reset.addEventListener('click',async()=>{
 
 });
 
+//useful functions
+
 function resetAll(){
 
     //re-initianalize necessary global variables
@@ -89,4 +105,11 @@ function resetAll(){
     stopFlag=false;
 }
 
+function getAllTransitions(){
+    transitionTable.forEach(state => {
+        state.transitions.forEach(transition=>{
+            allTransitions.push(transition);
+        });
+    });
+}
 
