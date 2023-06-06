@@ -89,6 +89,7 @@ function TapeVisualization(blank, input){
   else{ // the input array is not empty :
       if (input.length> Math.floor(cellNumber/2)+1){ // the input might be length might be larger than the cells provided to it 
           cellNumber = Math.floor(cellNumber/2)+input.length ; 
+          higherCell = cellNumber ; 
         }
     for(var i = 0 ; i<cellNumber ; i++){
       if(tapeHead <= i && i < tapeHead+input.length){

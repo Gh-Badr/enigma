@@ -22,7 +22,9 @@ label.logo {
 }
 
 
-
+.code-tape-container {
+  width:50%;
+}
 
 .container {
   display: flex;
