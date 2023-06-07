@@ -16,6 +16,8 @@ var allTransitions;
 var stopFlag=false;
 var promise;
 
+var codeMirrorElement
+
 var stepButton = document.getElementById('stepButton') ;
 var runAll = document.getElementById('run-allButton') ;
 var reset = document.getElementById('reset-Button');
@@ -27,8 +29,16 @@ function main() {
     document.getElementById("svgContainer").innerHTML="";
 
     let output = compile();
-    if(output.error != null) displayMessage('error',output.error);
+    if(output.error != null){
+        codeMirrorElement = document.querySelector(".CodeMirror");
+        codeMirrorElement.style.height = "450px";
+        displayMessage('error',output.error);
+    } 
     else {
+        codeMirrorElement = document.querySelector(".CodeMirror");
+        codeMirrorElement.style.height = "250px";
+
+
         //get the executable machine
         machine = output.machine;
         blankCharacter = machine.blank;
@@ -49,15 +59,24 @@ function main() {
         currentTransition=null;
 
 
-        //test
-        console.log("The stright lines of q0 are : ",getAllSourcesof('accept'));
-        console.log(retrieveIds('q1'));
+        //dsiplay execution buttons
+        var hiddenTapeButton = document.getElementById("container");
+        hiddenTapeButton.style.display = "block";
 
+
+        element = document.querySelector('.tape-container');
+        styles = getComputedStyle(element);
+        width = parseFloat(styles.width); 
+        a = width/cellWidth ; 
+        cellNumber = Math.floor(a);
+        tapeHead = Math.floor(cellNumber/2);
+        firstCellId = 'g' + tapeHead.toString(); 
+        currentCellId = firstCellId ;
 
 
         //initializing the execution tape
         TapeVisualization(blankCharacter,initialInput);
-
+        
         //setting up the messages
         if(output.warning != null) displayMessage('warning',output.warning);
         else displayMessage('valid');
@@ -69,13 +88,14 @@ function main() {
 
 stepButton.addEventListener('click',async()=>{
 
-    
+
 
     currentCell = d3.select("#tape").select('#'+currentCellId) ; 
     transition = findTransition(transitionTable,currentState,currentCell);
 
     stepExecute(currentCell,transition,blankCharacter) ;
 
+    
     if(transition.target==null){
         fireLoopTransition(currentState);
         await sleep(500);
@@ -85,14 +105,13 @@ stepButton.addEventListener('click',async()=>{
           await sleep(500);
       } 
       styleTransition('rgb(204, 204, 204)',1);
-
     
 
     
     
     //reset the previous state and highlight the currentState
     styleState(currentState,"black",1);
-    currentState = transition.target;
+    if(transition.target!=null) currentState = transition.target;
     styleState(currentState,"yellow",3);
 
 }) ; 
@@ -100,6 +119,7 @@ stepButton.addEventListener('click',async()=>{
 
 
 runAll.addEventListener('click',function(){
+
     currentCell = d3.select("#tape").select('#'+currentCellId) ; 
     executeAll(startingState,transitionTable,currentCell,blank)
     
@@ -150,4 +170,5 @@ function getAllTransitions(){
         });
     });
 }
+
 

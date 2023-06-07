@@ -26,7 +26,8 @@ label.logo {
   width:50%;
 }
 
-.container {
+.containerAll {
+  width:100%;
   display: flex;
   justify-content: space-between; /* Changed to space-between */
   align-items: flex-start;
@@ -71,9 +72,7 @@ svg line, svg text {
 
 /*For messages display*/
 
-.message-container {
-  padding: 30px 10px;
-}
+
 
 .warning-message{
   background-color: #FFE569;
@@ -85,4 +84,22 @@ svg line, svg text {
 
 .valid-message {
   background-color: #7DCE13;
+}
+
+
+/*buttons*/
+.btn1{
+  margin: 0 10px 20px; 
+}
+
+.btn2{
+  margin: 0 0 20px 200px;
+}
+
+.CodeMirror{
+  height: 500px;
+}
+
+.compile{
+  margin-bottom: 50px;
 }

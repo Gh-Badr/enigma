@@ -4,7 +4,7 @@ var cellHeight = 50 ;
 var headWidth = 60 ; 
 var headHeight = 55 ; 
 //--------------------------------------
-var element = document.querySelector('.tape');
+var element = document.querySelector('.tape-container');
 var styles = getComputedStyle(element);
 var width = parseFloat(styles.width); 
 var a = width/cellWidth ; 
@@ -35,10 +35,12 @@ function cell(Selection,text,id,position){
     Selection.append('g').attr('id',id).attr('transform','translate('+position+')'); 
     var group = Selection.select('#'+id)  ; // insertig the group element that contains both of the text and rect elements 
 
+    
+
     group.append('rect').attr('class', function(){if(id==='head-container'){ return 'tape-head' ; } else{return 'tape-cell' ; }}
     ).attr('width', function(){if(id==='head-container'){ return headWidth ; } else{return cellWidth ; }}
     ).attr('height',function(){if(id==='head-container'){ return headWidth ; } else{return cellWidth ; }})
-    .attr('y', function(){if(id==='head-container'){ return -3 }}).attr('x', function(){if(id==='head-container'){ return -3 }}) ; 
+    .attr('y', function(){if(id==='head-container'){ return -5 }}).attr('x', function(){if(id==='head-container'){ return -5 }}) ; 
     
     if(id!=='head-container'){
       group.append('text').attr('id','text1')
