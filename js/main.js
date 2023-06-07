@@ -72,6 +72,8 @@ function main() {
         tapeHead = Math.floor(cellNumber/2);
         firstCellId = 'g' + tapeHead.toString(); 
         currentCellId = firstCellId ;
+        lowestCell = -1 ; 
+        higherCell = cellNumber ; 
 
 
         //initializing the execution tape

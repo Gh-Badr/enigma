@@ -35,8 +35,6 @@ function cell(Selection,text,id,position){
     Selection.append('g').attr('id',id).attr('transform','translate('+position+')'); 
     var group = Selection.select('#'+id)  ; // insertig the group element that contains both of the text and rect elements 
 
-    
-
     group.append('rect').attr('class', function(){if(id==='head-container'){ return 'tape-head' ; } else{return 'tape-cell' ; }}
     ).attr('width', function(){if(id==='head-container'){ return headWidth ; } else{return cellWidth ; }}
     ).attr('height',function(){if(id==='head-container'){ return headWidth ; } else{return cellWidth ; }})

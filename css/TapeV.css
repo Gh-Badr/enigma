@@ -1,7 +1,7 @@
 .tape-cell{
   fill: white;
-  stroke: rgb(113, 113, 113);
-  stroke-width: 1px;
+  stroke: rgb(0, 0, 0);
+  stroke-width: 2px;
 }
 .tape-container{
   width: 100%;
@@ -23,5 +23,28 @@
 .tape-head{
   fill-opacity: 0%;
   stroke: rgb(255, 137, 19);
-  stroke-width: 1px;
+  stroke-width: 3px;
 }
+
+.left-rect,.right-rect{
+  width: 60px;
+  height: 51px;
+  position:absolute;
+  background-color: black;
+  border-top: solid 1.6px;
+  border-bottom: solid 3px;
+  
+}
+
+.left-rect{
+  left:0;
+  top:0;
+  background-image: linear-gradient(to right, black , white);
+}
+
+.right-rect{
+  right:0;
+  top:0;
+  background-image: linear-gradient(to right, white , black);
+}
+
