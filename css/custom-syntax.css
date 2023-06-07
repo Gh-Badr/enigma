@@ -13,6 +13,9 @@
 .cm-style5{
   color:rgb(14, 79, 20) !important;
 }
+.cm-style6{
+  color:#3EC70B;
+}
 nav {
   display: flex;
   align-items: center;
@@ -24,7 +27,7 @@ nav {
 }
 
 .logo img {
-  width: 70px; /* Adjust the width as needed */
+  width: 40px; /* Adjust the width as needed */
   height: auto; /* Maintain the aspect ratio */
   margin-right: 10px; /* Adjust the margin as needed */
 }

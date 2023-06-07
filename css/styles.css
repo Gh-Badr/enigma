@@ -70,9 +70,16 @@ svg line, svg text {
   pointer-events: none;
 }
 
+
 /*For messages display*/
 
-
+.message-container{
+  -webkit-border-radius: 34;
+  -moz-border-radius: 34;
+  border-radius: 34px;
+  padding: 10px;
+  margin-top: 5px;
+}
 
 .warning-message{
   background-color: #FFE569;
@@ -88,16 +95,21 @@ svg line, svg text {
 
 
 /*buttons*/
+
+.button-container{
+  padding-top: 50px;
+}
+
 .btn1{
   margin: 0 10px 20px; 
 }
 
 .btn2{
-  margin: 0 0 20px 200px;
+  margin: 0 0 20px 440px;
 }
 
 .CodeMirror{
-  height: 500px;
+  height: 430px;
 }
 
 .compile{

@@ -11,13 +11,9 @@ CodeMirror.defineMode('customMode', function() {
         return 'style2';
       }
       
-      if (stream.match('write') || stream.match('R') || stream.match('L') || stream.match('right') || stream.match('left') ) {
+      if (stream.match('write') || stream.match('right') || stream.match('left') ) {
         return 'style1';
       }
-      if (stream.match('#')) {
-          stream.skipToEnd();
-          return 'style5';
-        }
       if (stream.match(/abc\d+/)) {
         return 'style1';
       }
@@ -30,13 +26,13 @@ CodeMirror.defineMode('customMode', function() {
        if(stream.match("{") || stream.match('}') ){
         return 'style4';
      }
-       if (stream.match(/[a-zA-Z][0-9]/)) {
-              // name of the state, can contain only one letter  and one number
-              return 'style2';
-      }
-      if (stream.match(/'([01]*)'/)) { 
-      return 'style2'; 
+      if (stream.match(/'([0-9]|[a-zA-Z])'/) || stream.match(/'( )'/) || stream.match(/"(.*?")(".*")*/) ) { 
+        return 'style6';
         }
+      // if (stream.match('#')) {
+      //     stream.skipToEnd();
+      //     return 'style5';
+      //   }
       // Move to the next token
       stream.next();
       return null;

@@ -30,16 +30,22 @@ function main() {
 
     let output = compile();
     if(output.error != null){
+
+        //reset the size of the code editor
         codeMirrorElement = document.querySelector(".CodeMirror");
         codeMirrorElement.style.height = "450px";
+
+        //display error message
         displayMessage('error',output.error);
     } 
     else {
+
+        //reset the size of the code editor
         codeMirrorElement = document.querySelector(".CodeMirror");
         codeMirrorElement.style.height = "250px";
 
 
-        //get the executable machine
+        //get the executable machine and initialize necessary global variables
         machine = output.machine;
         blankCharacter = machine.blank;
         initialInput=machine.inputString;
@@ -53,17 +59,17 @@ function main() {
         getAllTransitions();
         console.log(allTransitions);
         drawTransition(allTransitions);
-
         styleState(currentState,"yellow",3);
+
 
         currentTransition=null;
 
 
-        //dsiplay execution buttons
+        //display execution buttons
         var hiddenTapeButton = document.getElementById("container");
         hiddenTapeButton.style.display = "block";
 
-
+        //re-initialize tape related global variables
         element = document.querySelector('.tape-container');
         styles = getComputedStyle(element);
         width = parseFloat(styles.width); 
