@@ -1,5 +1,3 @@
-
-
 //Global declarations
 var blankCharacter;
 var initialInput;
@@ -13,141 +11,144 @@ var transition;
 
 var allTransitions;
 
-var stopFlag=false;
+var stopFlag = false;
 var promise;
 
-var stepButton = document.getElementById('stepButton') ;
-var runAll = document.getElementById('run-allButton') ;
-var reset = document.getElementById('reset-Button');
+var codeMirrorElement;
 
+var stepButton = document.getElementById("stepButton");
+var runAll = document.getElementById("run-allButton");
+var reset = document.getElementById("reset-Button");
 
-//main 
+//main
 function main() {
+  document.getElementById("svgContainer").innerHTML = "";
 
-    document.getElementById("svgContainer").innerHTML="";
+  //get the compiler output
+  let output = compile();
 
-    let output = compile();
-    if(output.error != null) displayMessage('error',output.error);
-    else {
-        //get the executable machine
-        machine = output.machine;
-        blankCharacter = machine.blank;
-        initialInput=machine.inputString;
-        transitionTable=machine.transitionTable;
-        startingState=machine.startState;
-        currentState=startingState;
+  //test if there's a compile error
+  if (output.error != null) {
+    //reset the size of the code editor
+    codeMirrorElement = document.querySelector(".CodeMirror");
+    codeMirrorElement.style.height = "450px";
 
-        //draw the graph
-        drawState(declarativeStates);
-        allTransitions=[];
-        getAllTransitions();
-        console.log(allTransitions);
-        drawTransition(allTransitions);
+    //display error message
+    displayMessage("error", output.error);
+  } else {
+    //reset the size of the code editor
+    codeMirrorElement = document.querySelector(".CodeMirror");
+    codeMirrorElement.style.height = "250px";
 
-        styleState(currentState,"yellow",3);
+    //get the executable machine and initialize necessary global variables
+    machine = output.machine;
+    blankCharacter = machine.blank;
+    initialInput = machine.inputString;
+    transitionTable = machine.transitionTable;
+    startingState = machine.startState;
+    currentState = startingState;
 
-        currentTransition=null;
+    //draw the graph
+    drawState(declarativeStates);
+    allTransitions = [];
+    getAllTransitions();
+    console.log(allTransitions);
+    drawTransition(allTransitions);
+    styleState(currentState, "yellow", 3);
 
+    currentTransition = null;
 
-        //test
-        console.log("The stright lines of q0 are : ",getAllSourcesof('accept'));
-        console.log(retrieveIds('q1'));
+    //display execution buttons
+    var hiddenTapeButton = document.getElementById("container");
+    hiddenTapeButton.style.display = "block";
 
+    //re-initialize tape related global variables (is all that necessary ?)
+    element = document.querySelector(".tape-container");
+    styles = getComputedStyle(element);
+    width = parseFloat(styles.width);
+    a = width / cellWidth;
+    cellNumber = Math.floor(a);
+    tapeHead = Math.floor(cellNumber / 2);
+    firstCellId = "g" + tapeHead.toString();
+    currentCellId = firstCellId;
+    lowestCell = -1;
+    higherCell = cellNumber;
 
+    //initializing the execution tape
+    TapeVisualization(blankCharacter, initialInput);
 
-        //initializing the execution tape
-        TapeVisualization(blankCharacter,initialInput);
-
-        //setting up the messages
-        if(output.warning != null) displayMessage('warning',output.warning);
-        else displayMessage('valid');
-    }
+    //setting up the messages
+    if (output.warning != null) displayMessage("warning", output.warning);
+    else displayMessage("valid");
+  }
 }
-
 
 //adding event listeners
 
-stepButton.addEventListener('click',async()=>{
+stepButton.addEventListener("click", async () => {
+  currentCell = d3.select("#tape").select("#" + currentCellId);
+  transition = findTransition(transitionTable, currentState, currentCell);
+  stepExecute(currentCell, transition, blankCharacter);
 
-    
+  //fire the corresponding transition
+  if (transition.target == null) {
+    fireLoopTransition(currentState);
+    await sleep(500);
+  } else {
+    fireDirectTransition(currentState, transition.target);
+    await sleep(500);
+  }
+  styleTransition("rgb(204, 204, 204)", 1);
 
-    currentCell = d3.select("#tape").select('#'+currentCellId) ; 
-    transition = findTransition(transitionTable,currentState,currentCell);
-
-    stepExecute(currentCell,transition,blankCharacter) ;
-
-    if(transition.target==null){
-        fireLoopTransition(currentState);
-        await sleep(500);
-      } 
-      else{
-          fireDirectTransition(currentState,transition.target);
-          await sleep(500);
-      } 
-      styleTransition('rgb(204, 204, 204)',1);
-
-    
-
-    
-    
-    //reset the previous state and highlight the currentState
-    styleState(currentState,"black",1);
-    currentState = transition.target;
-    styleState(currentState,"yellow",3);
-
-}) ; 
-
-
-
-runAll.addEventListener('click',function(){
-    currentCell = d3.select("#tape").select('#'+currentCellId) ; 
-    executeAll(startingState,transitionTable,currentCell,blank)
-    
-    
+  //reset the previous state and highlight the currentState
+  styleState(currentState, "black", 1);
+  if (transition.target != null) currentState = transition.target;
+  styleState(currentState, "yellow", 3);
 });
 
-reset.addEventListener('click',async()=>{
+runAll.addEventListener("click", function () {
+  currentCell = d3.select("#tape").select("#" + currentCellId);
+  executeAll(startingState, transitionTable, currentCell, blank);
+});
 
-    //stop ExecuteAll
-    stopFlag=true;
-    await sleep(500);
+reset.addEventListener("click", async () => {
+  //stop ExecuteAll
+  stopFlag = true;
+  await sleep(500);
 
-    resetAll();
-
-
+  resetAll();
 });
 
 //useful functions
 
-function resetAll(){
-    //re-initialize the graph
-    console.log(currentState);
-    styleState(currentState,"black",1);
+function resetAll() {
+  //re-initialize the graph
+  console.log(currentState);
+  styleState(currentState, "black", 1);
 
-    //re-initianalize necessary global variables
-    currentCellId=firstCellId;
-    currentState=startState;
-    cellNumber=Math.floor(a);
+  //re-initianalize necessary global variables
+  currentCellId = firstCellId;
+  currentState = startState;
+  cellNumber = Math.floor(a);
 
-    lowestCell=-1;
-    higherCell=cellNumber;
+  lowestCell = -1;
+  higherCell = cellNumber;
 
-    //re-initializing the execution tape
-    document.getElementById("tape").innerHTML="";
-    document.getElementById("head").innerHTML="";
-    TapeVisualization(blankCharacter,initialInput);
+  //re-initializing the execution tape
+  document.getElementById("tape").innerHTML = "";
+  document.getElementById("head").innerHTML = "";
+  TapeVisualization(blankCharacter, initialInput);
 
-    //re-initialize the graph
-    styleState(currentState,"yellow",3);
+  //re-initialize the graph
+  styleState(currentState, "yellow", 3);
 
-    stopFlag=false;
+  stopFlag = false;
 }
 
-function getAllTransitions(){
-    transitionTable.forEach(state => {
-        state.transitions.forEach(transition=>{
-            allTransitions.push(transition);
-        });
+function getAllTransitions() {
+  transitionTable.forEach((state) => {
+    state.transitions.forEach((transition) => {
+      allTransitions.push(transition);
     });
+  });
 }
-

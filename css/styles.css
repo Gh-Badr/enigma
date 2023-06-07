@@ -1,9 +1,26 @@
-*{
+* {
   padding: 0;
   margin: 0;
   text-decoration: none;
   list-style: none;
   box-sizing: border-box;
+}
+
+/*nav bar*/
+nav {
+  display: flex;
+  align-items: center;
+}
+
+.logo {
+  display: flex;
+  align-items: center;
+}
+
+.logo img {
+  width: 40px; /* Adjust the width as needed */
+  height: auto; /* Maintain the aspect ratio */
+  margin-right: 10px; /* Adjust the margin as needed */
 }
 
 nav {
@@ -21,12 +38,9 @@ label.logo {
   font-weight: bold;
 }
 
-
-.code-tape-container {
-  width:50%;
-}
-
-.container {
+/* main content*/
+.containerAll {
+  width: 100%;
   display: flex;
   justify-content: space-between; /* Changed to space-between */
   align-items: flex-start;
@@ -41,6 +55,11 @@ label.logo {
   min-width: 0; /* Added min-width to ensure equal size */
 }
 
+.code-tape-container {
+  width: 50%;
+}
+
+/* code editor */
 .editor-container {
   padding: 20px;
   background-color: #f2f2f2;
@@ -53,6 +72,11 @@ label.logo {
   height: 300px;
 }
 
+.CodeMirror {
+  height: 430px;
+}
+
+/* graph container */
 .graph-container {
   padding: 20px;
   background-color: #f2f2f2;
@@ -65,24 +89,45 @@ label.logo {
   height: 400px; /* Adjust the height as needed */
   background-color: white;
 }
-svg line, svg text {
+svg line,
+svg text {
   pointer-events: none;
 }
 
 /*For messages display*/
-
 .message-container {
-  padding: 30px 10px;
+  -webkit-border-radius: 34;
+  -moz-border-radius: 34;
+  border-radius: 34px;
+  padding: 10px;
+  margin-top: 5px;
 }
 
-.warning-message{
-  background-color: #FFE569;
+.warning-message {
+  background-color: #ffe569;
 }
 
 .error-message {
-  background-color: #F55050;
+  background-color: #f55050;
 }
 
 .valid-message {
-  background-color: #7DCE13;
+  background-color: #7dce13;
+}
+
+/*buttons*/
+.button-container {
+  padding-top: 50px;
+}
+
+.btn1 {
+  margin: 0 10px 20px;
+}
+
+.btn2 {
+  margin: 0 0 20px 440px;
+}
+
+.compile {
+  margin-bottom: 50px;
 }
