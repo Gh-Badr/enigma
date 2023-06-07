@@ -303,19 +303,30 @@ var memory = [];
         ' A ' + (radius-5) + ',' + (radius+5) + ' 0 1,1 ' +
         (endX-1) + ',' + (endY+1.87));
 
-    // Create or update the text for the loop action
-    var actionText = svg.select('#actionText_' + state);
-    if (actionText.empty()) {
-      actionText = svg.append('text')
-          .attr('id', 'actionText_' + state)
-          .attr('text-anchor', 'middle')
-          .attr('alignment-baseline', 'middle')
-          .attr('font-size', '12px');
-    }
-    var actionTextContent = transition.characters.join(',') + '->' + transition.direction;
-    actionText.attr('x', centerX+16)
-        .attr('y', centerY - radius - 26) // Position the text above the loop arc
-        .text(actionTextContent);
+    var text = svg.append('text')
+        .attr('font-size', '12px');
+
+    var textPath = text.append('textPath')
+        .attr('startOffset', '50%')
+        .attr('text-anchor', 'middle')
+        .attr('alignment-baseline', 'text-after-edge');
+        if (transition.write) {
+          var transitionText = transition.characters.join(',') + ' -> ' + transition.write + ' , ' + transition.direction;
+         
+         }
+         else {
+           var transitionText = transition.characters.join(',') + ' -> ' + transition.direction;
+         }
+        textPath.text(transitionText);
+
+// Get the id of the path element
+    var pathId = path.attr('id');
+
+// Add the path reference to the textPath
+    textPath.attr('href',  '#' + pathId);
+
+// Add the path reference to the textPath
+    svg.attr('href', '#' + pathId);
   }
 
 
@@ -353,8 +364,15 @@ var memory = [];
     var textPath = text.append('textPath')
         .attr('startOffset', '50%')
         .attr('text-anchor', 'middle')
-        .attr('alignment-baseline', 'text-after-edge')
-        .text(transition.characters.join(',') + '->' + transition.direction);
+        .attr('alignment-baseline', 'text-after-edge');
+        if (transition.write) {
+          var transitionText = transition.characters.join(',') + ' -> ' + transition.write + ' , ' + transition.direction;
+         
+         }
+         else {
+           var transitionText = transition.characters.join(',') + ' -> ' + transition.direction;
+         }
+        textPath.text(transitionText);
 
 // Get the id of the path element
     var pathId = path.attr('id');
@@ -401,8 +419,16 @@ var memory = [];
     var textPath = text.append('textPath')
         .attr('startOffset', '50%')
         .attr('text-anchor', 'middle')
-        .attr('alignment-baseline', 'text-after-edge')
-        .text(transition.characters.join(',') + '->' + transition.direction);
+        .attr('alignment-baseline', 'text-after-edge');
+        if (transition.write) {
+          var transitionText = transition.characters.join(',') + ' -> ' + transition.write + ' , ' + transition.direction;
+         
+         }
+         else {
+           var transitionText = transition.characters.join(',') + ' -> ' + transition.direction;
+         }
+        textPath.text(transitionText);
+        
 
 // Get the id of the path element
     var pathId = path.attr('id');
@@ -508,9 +534,16 @@ var memory = [];
     var textPath = text.append('textPath')
         .attr('startOffset', '50%')
         .attr('text-anchor', 'middle')
-        .attr('alignment-baseline', 'text-after-edge')
-        .text(transition.characters.join(',') + '->' + transition.direction);
-
+        .attr('alignment-baseline', 'text-after-edge');
+        if (transition.write) {
+          var transitionText = transition.characters.join(',') + ' -> ' + transition.write + ' , ' + transition.direction;
+         
+         }
+         else {
+           var transitionText = transition.characters.join(',') + ' -> ' + transition.direction;
+         }
+         
+         textPath.text(transitionText);
     var pathId = path.attr('id');
     textPath.attr('href', '#' + pathId);
     svg.attr('href', '#' + pathId);
