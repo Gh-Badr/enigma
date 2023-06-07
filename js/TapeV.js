@@ -180,21 +180,41 @@ function stepExecute(currentCell,transition,blank){
         moveCursor(direction,blank) ; 
     }
 }
-function executeAll(currentState,transitionTable,currentCell,blank){
+async function executeAll(thisCurrentState,transitionTable,currentCell,blank){
+
+  styleState(thisCurrentState,"yellow",3);
+  
    
-  var currentTransition=findTransition(transitionTable,currentState,currentCell);
-  console.log(currentTransition);
+  var thisCurrentTransition=findTransition(transitionTable,thisCurrentState,currentCell);
+  console.log(thisCurrentTransition);
 
-  if(currentTransition==null) return;
+  if(thisCurrentTransition==null){
+    currentState=thisCurrentState;
+    return;
+  } 
 
-  stepExecute(currentCell,currentTransition,blank);
+  stepExecute(currentCell,thisCurrentTransition,blank);
+
+  if(thisCurrentTransition.target==null){
+    fireLoopTransition(thisCurrentState);
+    await sleep(500);
+  } 
+  else{
+      fireDirectTransition(thisCurrentState,thisCurrentTransition.target);
+      await sleep(500);
+  } 
+  styleTransition('rgb(204, 204, 204)',1);
 
   currentCell = d3.select("#tape").select('#'+currentCellId) ; 
 
   if(!stopFlag){
       setTimeout(function(){
-        if(currentTransition.target==null) executeAll(currentState,transitionTable,currentCell,blank);
-        else executeAll(currentTransition.target,transitionTable,currentCell,blank);
+        if(thisCurrentTransition.target==null) executeAll(thisCurrentState,transitionTable,currentCell,blank);
+        else{
+          styleState(thisCurrentState,"black",1);
+          currentState=thisCurrentTransition.target;
+          executeAll(thisCurrentTransition.target,transitionTable,currentCell,blank);
+        } 
       },500);
   }else{
     return;

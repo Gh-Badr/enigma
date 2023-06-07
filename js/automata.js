@@ -1,6 +1,6 @@
 var memory = [];
 
-document.addEventListener("DOMContentLoaded", function() {
+
   // Define the drawState function
   function drawState(states) {
     // Select the SVG container
@@ -77,6 +77,9 @@ document.addEventListener("DOMContentLoaded", function() {
     var x = Math.max(stateRadius, Math.min(maxX, d3.event.x));
     var y = Math.max(stateRadius, Math.min(maxY, d3.event.y));
 
+    var lineId = "";
+    var thisState = "";
+
     d3.select(this)
         .attr("transform", function(d) {
           // Update the center coordinates of the state
@@ -87,8 +90,20 @@ document.addEventListener("DOMContentLoaded", function() {
           // console.log(getTargetState(stateId));
           // Update the loop arc for the current state
           updateLoopArc(stateId, centerX, centerY);
-          updateCurvLineRetour(stateId, getTargetState(stateId),centerX,centerY)
-          updateCurvLineAller(stateId, getTargetState(stateId),centerX,centerY)
+          updateCurvLineRetour(stateId, centerX,centerY)
+          updateCurvLineAller(stateId, centerX,centerY)
+
+          thisState = stateId;
+          // alert(retrieveIds(currentState, transitions));
+          lineId=retrieveIds(thisState);
+          if(lineId.charAt(0)!="3") {
+            lineId = lineId.substring(1);
+            [currentId, targetId] = lineId.split("%");
+            console.log(currentId);
+            updateStraightLineSource(currentId);
+            updateStraightLineTarget(currentId);
+            
+          }
           return "translate(" + (d.x = x) + "," + (d.y = y) + ")";
         });
   }
@@ -126,13 +141,15 @@ document.addEventListener("DOMContentLoaded", function() {
   }
 
 
-  function updateCurvLineRetour(state, transition,newX,newY) {
+  function updateCurvLineRetour(state, newX,newY) {
     var svg = d3.select('#svgContainer');
     var firstPart,secondPart;
     for (let i = 0; i < memory.length; i++) {
-      [firstPart, secondPart] = memory[i].split("DEL");
+      [firstPart, secondPart] = memory[i].split("%");
       if (firstPart === state) {
         var currentState = svg.select('#state_' + state);
+
+        
 
         var centerX = parseFloat(currentState.attr('transform').split('(')[1].split(',')[0]);
         var centerY = parseFloat(currentState.attr('transform').split('(')[1].split(',')[1].split(')')[0]);
@@ -160,11 +177,11 @@ document.addEventListener("DOMContentLoaded", function() {
     }
   }
 
-  function updateCurvLineAller(state, transition,newX,newY) {
+  function updateCurvLineAller(state,newX,newY) {
     var svg = d3.select('#svgContainer');
     var firstPart,secondPart;
     for (let i = 0; i < memory.length; i++) {
-      [firstPart, secondPart] = memory[i].split("DEL");
+      [firstPart, secondPart] = memory[i].split("%");
       if (secondPart === state) {
         var currentState = svg.select('#state_' + state);
 
@@ -203,18 +220,20 @@ document.addEventListener("DOMContentLoaded", function() {
     for (var i = 0; i < transitions.length; i++) {
       var transition = transitions[i];
       // Check if the current state equals the target state
-      if (transition.currentState === transition.target) {
-        loopArc(transition.currentState, transition);
+      if (null == transition.target) {
+        loopArc(transition.state, transition);
 
       }
       else if (((curvId=hasReverseTransition(transition, transitions)).charAt(0))=="1" ) {
         curvId=curvId.substring(1);
         // alert(hi);
-        curvLineRetour(transition.currentState, transition,curvId);
+        curvLineRetour(transition.state, transition,curvId);
       }else if(((curvId=hasReverseTransition(transition, transitions)).charAt(0))=="2") {
         curvId=curvId.substring(1);
         // alert(hi);
-        curvLineAller(transition.currentState, transition,curvId);
+        curvLineAller(transition.state, transition,curvId);
+      }else{
+        StraightLine(transition.state,transition,transition.state+transition.target);
       }
 
     }
@@ -224,16 +243,16 @@ document.addEventListener("DOMContentLoaded", function() {
     for (var i = 0; i < transitions.length; i++) {
       var reverseTransition = transitions[i];
       if (
-          reverseTransition.currentState === transition.target &&
-          reverseTransition.target === transition.currentState
-      ) { if(!memory.includes(reverseTransition.currentState + 'DEL' + transition.currentState))memory.push(reverseTransition.currentState + 'DEL' + transition.currentState);
-        if(memory.includes(transition.currentState + 'DEL' + reverseTransition.currentState))
-          return '1'+transition.currentState+ reverseTransition.currentState;
-        //console.log(reverseTransition.currentState+" and "+ transition.currentState);
-        return '2'+transition.currentState+ reverseTransition.currentState;
+          reverseTransition.state === transition.target &&
+          reverseTransition.target === transition.state
+      ) { if(!memory.includes(reverseTransition.state + '%' + transition.state))memory.push(reverseTransition.state + '%' + transition.state);
+        if(memory.includes(transition.state + '%' + reverseTransition.state))
+          return '1'+transition.state+ reverseTransition.state;
+        //console.log(reverseTransition.state+" and "+ transition.state);
+        return '2'+transition.state+ reverseTransition.state;
       }
     }
-    return 3;
+    return '3';
   }
 
 
@@ -304,6 +323,8 @@ document.addEventListener("DOMContentLoaded", function() {
   function curvLineRetour(state, transition,curvId) {
     var svg = d3.select('#svgContainer');
     var currentState = svg.select('#state_' + state);
+
+    console.log(state);
 
     var centerX = parseFloat(currentState.attr('transform').split('(')[1].split(',')[0]);
     var centerY = parseFloat(currentState.attr('transform').split('(')[1].split(',')[1].split(')')[0]);
@@ -393,75 +414,259 @@ document.addEventListener("DOMContentLoaded", function() {
     svg.attr('href', '#' + pathId);
   }
 
-  // Define your states and transitions
-  var states = ['q3', 'q1', 'q2','hello'];
-  // Example transitions
-  var transitions = [
-    {
-      currentState: 'hello',
-      characters: ['0', '1'],
-      direction: 'R',
-      target: 'hello'
-    },
-    {
-      currentState: 'q2',
-      characters: ['0', '1'],
-      direction: 'R',
-      target: 'q2'
-    },
-    {
-      currentState: 'q1',
-      characters: ['0'],
-      direction: 'L',
-      target: 'q3'
-    },
-    {
-      currentState: 'q3',
-      characters: ['7','9'],
-      direction: 'R',
-      target: 'q1'
-    },
-    {
-      currentState: 'q2',
-      characters: ['6'],
-      direction: 'L',
-      target: 'q3'
-    },
-    {
-      currentState: 'q3',
-      characters: ['5','0'],
-      direction: 'R',
-      target: 'q2'
-    },
-    {
-      currentState: 'q2',
-      characters: ['4'],
-      direction: 'L',
-      target: 'hello'
-    },
-    {
-      currentState: 'hello',
-      characters: ['1'],
-      direction: 'R',
-      target: 'q2'
-    },
+
+  function getAllTargetsof(thisState) {
+    var transition;
+    var strightLines=[];
+    for (let i = 0; i < allTransitions.length; i++) {
+      transition = allTransitions[i];
+      if (transition.state === thisState && transition.target != null) {
+        if (!memory.includes(transition.state + '%' + transition.target)) {
+          strightLines.push(transition.state + '%' + transition.target);
+        }
+      }
+    }
+    return strightLines;
+  }
+
+  function getAllSourcesof(thisState) {
+    var transition;
+    var strightLines=[];
+    for (let i = 0; i < allTransitions.length; i++) {
+      transition = allTransitions[i];
+      if (transition.target === thisState && transition.state != null) {
+        if (!memory.includes(transition.state + '%' + transition.target)) {
+          strightLines.push(transition.state + '%' + transition.target);
+        }
+      }
+    }
+    return strightLines;
+  }
 
 
-  ];
-  function getTargetState(currentState) {
-    for (let i = 0; i < transitions.length; i++) {
-      if (transitions[i].currentState === currentState) {
-        return transitions[i].target;
+  function StraightLine(state, transition,curvId) {
+    var svg = d3.select('#svgContainer');
+    var thisState = svg.select('#state_' + state);
+
+    var centerX = parseFloat(thisState.attr('transform').split('(')[1].split(',')[0]);
+    var centerY = parseFloat(thisState.attr('transform').split('(')[1].split(',')[1].split(')')[0]);
+
+    var targetState = svg.select('#state_' + transition.target);
+    var targetX = parseFloat(targetState.attr('transform').split('(')[1].split(',')[0]);
+    var targetY = parseFloat(targetState.attr('transform').split('(')[1].split(',')[1].split(')')[0]);
+
+
+    // Adjust the start point based on the line slope
+
+    if(centerX < 300){
+      if(targetY<250){
+        var path = svg.append('path')
+            .attr('d', 'M ' + (centerX +25-2) + ',' + (centerY  - 25 / 2) +
+                ' L ' + (targetX-25) + ',' + targetY)
+            .attr('stroke', 'rgb(' + 204 + ', ' + 204 + ', ' + 204 + ')')
+            .attr('id', curvId)
+            .attr('fill', 'none')
+            .attr('marker-end', 'url(#arrowhead)');}
+      else{
+        var path = svg.append('path')
+            .attr('d', 'M ' + (centerX +5) + ',' + (centerY  - 25 / 2 +35) +
+                ' L ' + (targetX-10) + ',' + (targetY-27))
+            .attr('stroke', 'rgb(' + 204 + ', ' + 204 + ', ' + 204 + ')')
+            .attr('id', curvId)
+            .attr('fill', 'none')
+            .attr('marker-end', 'url(#arrowhead)');
+
+      }
+
+    }
+    else {
+      if(targetY<250){
+        var path = svg.append('path')
+            .attr('d', 'M ' + (centerX -8) + ',' + (centerY  - 25 / 2 - 9) +
+                ' L ' + (targetX+3) + ',' + (targetY+28))
+            .attr('stroke', 'rgb(' + 204 + ', ' + 204 + ', ' + 204 + ')')
+            .attr('id', curvId)
+            .attr('fill', 'none')
+            .attr('marker-end', 'url(#arrowhead)');}
+      else{
+        var path = svg.append('path')
+            .attr('d', 'M ' + (centerX -27) + ',' + (centerY  - 25 / 2 +10) +
+                ' L ' + (targetX+28) + ',' + (targetY-2))
+            .attr('stroke', 'rgb(' + 204 + ', ' + 204 + ', ' + 204 + ')')
+            .attr('id', curvId)
+            .attr('fill', 'none')
+            .attr('marker-end', 'url(#arrowhead)');
+
+      }
+
+
+    }
+
+    var text = svg.append('text')
+        .attr('font-size', '12px');
+
+    var textPath = text.append('textPath')
+        .attr('startOffset', '50%')
+        .attr('text-anchor', 'middle')
+        .attr('alignment-baseline', 'text-after-edge')
+        .text(transition.characters.join(',') + '->' + transition.direction);
+
+    var pathId = path.attr('id');
+    textPath.attr('href', '#' + pathId);
+    svg.attr('href', '#' + pathId);
+  }
+
+
+  function retrieveIds(thisState) {
+    for (var i = 0; i < allTransitions.length; i++) {
+      var transition = allTransitions[i];
+      if (transition.state === thisState && transition.target!=null) {
+        console.log("ssalaaaam");
+        if(!memory.includes(transition.state + '%' + transition.target)){
+          return '1' + thisState + '%' + transition.target;
+        }
+      }
+      else if (transition.target === thisState && transition.state != null) {
+        if (!memory.includes(transition.state + '%' + transition.target)) {
+          return '2' + thisState + '%' + transition.target;
+        }
+      }
+    }
+    return '3';
+  }
+
+
+  function updateStraightLineSource(currentId) {
+    var sources=getAllSourcesof(currentId);
+    if(sources.length!=0){
+      var svg = d3.select('#svgContainer');
+      var thisState = svg.select('#state_' + currentId);
+      var first,last;
+      var centerX = parseFloat(thisState.attr('transform').split('(')[1].split(',')[0]);
+      var centerY = parseFloat(thisState.attr('transform').split('(')[1].split(',')[1].split(')')[0]);
+      for(let i=0 ;i<sources.length;i++){
+        [first,last] = sources[i].split('%');
+        var targetState = svg.select('#state_' + first);
+        var targetX = parseFloat(targetState.attr('transform').split('(')[1].split(',')[0]);
+        var targetY = parseFloat(targetState.attr('transform').split('(')[1].split(',')[1].split(')')[0]);
+
+        // Adjust the start point based on the line slope
+        var startX, startY;
+
+        if (centerX < targetX) {
+          startX = centerX + 25;
+          startY = centerY - 12.5;
+        } else {
+          startX = centerX - 25;
+          startY = centerY - 12.5;
+        }
+        console.log(first + ' and ' + currentId);
+
+        var path = svg.select('#'+first+currentId);
+        path.attr('d', 'M ' + targetX + ',' + (targetY+25) +
+            ' L ' + startX + ',' + startY);
       }
     }
   }
 
-  // Call the drawState function with your states
-  drawState(states);
 
-  // Call the drawTransition function with the transitions array
-  drawTransition(transitions);
+  function updateStraightLineTarget(currentId) {
+    var targets=getAllTargetsof(currentId);
+    if(targets.length!=0){
+      var svg = d3.select('#svgContainer');
+      var thisState = svg.select('#state_' + currentId);
+      var first,last;
+      var targets=getAllTargetsof(currentId);
+      // alert(sources);
+      var centerX = parseFloat(thisState.attr('transform').split('(')[1].split(',')[0]);
+      var centerY = parseFloat(thisState.attr('transform').split('(')[1].split(',')[1].split(')')[0]);
+
+      for(let i=0 ;i<targets.length;i++){
+        [first,last] = targets[i].split('%');
+        var targetState = svg.select('#state_' + last);
+        var targetX = parseFloat(targetState.attr('transform').split('(')[1].split(',')[0]);
+        var targetY = parseFloat(targetState.attr('transform').split('(')[1].split(',')[1].split(')')[0]);
+
+        // Adjust the start point based on the line slope
+        var startX, startY;
+
+        if (centerX < targetX) {
+          startX = centerX + 25;
+          startY = centerY - 12.5;
+        } else {
+          startX = centerX - 25;
+          startY = centerY - 12.5;
+        }
+        console.log(startX + ' and ' + startY);
+
+        var path = svg.select('#'+currentId+last);
+        path.attr('d', 'M ' + startX + ',' + (startY+20) +
+            ' L ' + (targetX) + ',' + (targetY+25));
+      }
+    }
+
+  }
+
+
+
+  // // Define your states and transitions
+  // var states = ['q3', 'q1', 'q2','hello'];
+  // // Example transitions
+  // var transitions = [
+  //   {
+  //     currentState: 'hello',
+  //     characters: ['0', '1'],
+  //     direction: 'R',
+  //     target: 'hello'
+  //   },
+  //   {
+  //     currentState: 'q2',
+  //     characters: ['0', '1'],
+  //     direction: 'R',
+  //     target: 'q2'
+  //   },
+  //   {
+  //     currentState: 'q1',
+  //     characters: ['0'],
+  //     direction: 'L',
+  //     target: 'q3'
+  //   },
+  //   {
+  //     currentState: 'q3',
+  //     characters: ['7','9'],
+  //     direction: 'R',
+  //     target: 'q1'
+  //   },
+  //   {
+  //     currentState: 'q2',
+  //     characters: ['6'],
+  //     direction: 'L',
+  //     target: 'q3'
+  //   },
+  //   {
+  //     currentState: 'q3',
+  //     characters: ['5','0'],
+  //     direction: 'R',
+  //     target: 'q2'
+  //   },
+  //   {
+  //     currentState: 'q2',
+  //     characters: ['4'],
+  //     direction: 'L',
+  //     target: 'hello'
+  //   },
+  //   {
+  //     currentState: 'hello',
+  //     characters: ['1'],
+  //     direction: 'R',
+  //     target: 'q2'
+  //   },
+
+
+  // ];
+
+
+
 
   console.log(memory);
 
-});

@@ -11,6 +11,8 @@ var currentCell;
 var currentState;
 var transition;
 
+var allTransitions;
+
 var stopFlag=false;
 var promise;
 
@@ -21,6 +23,9 @@ var reset = document.getElementById('reset-Button');
 
 //main 
 function main() {
+
+    document.getElementById("svgContainer").innerHTML="";
+
     let output = compile();
     if(output.error != null) displayMessage('error',output.error);
     else {
@@ -31,6 +36,24 @@ function main() {
         transitionTable=machine.transitionTable;
         startingState=machine.startState;
         currentState=startingState;
+
+        //draw the graph
+        drawState(declarativeStates);
+        allTransitions=[];
+        getAllTransitions();
+        console.log(allTransitions);
+        drawTransition(allTransitions);
+
+        styleState(currentState,"yellow",3);
+
+        currentTransition=null;
+
+
+        //test
+        console.log("The stright lines of q0 are : ",getAllSourcesof('accept'));
+        console.log(retrieveIds('q1'));
+
+
 
         //initializing the execution tape
         TapeVisualization(blankCharacter,initialInput);
@@ -44,11 +67,34 @@ function main() {
 
 //adding event listeners
 
-stepButton.addEventListener('click',function(){
+stepButton.addEventListener('click',async()=>{
+
+    
+
     currentCell = d3.select("#tape").select('#'+currentCellId) ; 
     transition = findTransition(transitionTable,currentState,currentCell);
+
     stepExecute(currentCell,transition,blankCharacter) ;
+
+    if(transition.target==null){
+        fireLoopTransition(currentState);
+        await sleep(500);
+      } 
+      else{
+          fireDirectTransition(currentState,transition.target);
+          await sleep(500);
+      } 
+      styleTransition('rgb(204, 204, 204)',1);
+
+    
+
+    
+    
+    //reset the previous state and highlight the currentState
+    styleState(currentState,"black",1);
     currentState = transition.target;
+    styleState(currentState,"yellow",3);
+
 }) ; 
 
 
@@ -71,7 +117,12 @@ reset.addEventListener('click',async()=>{
 
 });
 
+//useful functions
+
 function resetAll(){
+    //re-initialize the graph
+    console.log(currentState);
+    styleState(currentState,"black",1);
 
     //re-initianalize necessary global variables
     currentCellId=firstCellId;
@@ -86,7 +137,17 @@ function resetAll(){
     document.getElementById("head").innerHTML="";
     TapeVisualization(blankCharacter,initialInput);
 
+    //re-initialize the graph
+    styleState(currentState,"yellow",3);
+
     stopFlag=false;
 }
 
+function getAllTransitions(){
+    transitionTable.forEach(state => {
+        state.transitions.forEach(transition=>{
+            allTransitions.push(transition);
+        });
+    });
+}
 
