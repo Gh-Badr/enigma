@@ -376,6 +376,7 @@ function loopArc(state, transition) {
       .attr("text-anchor", "middle")
       .attr("alignment-baseline", "middle")
       .attr("font-size", "12px");
+
   }
   var actionTextContent =
     transition.characters.join(",") + "->" + transition.direction;
@@ -647,6 +648,7 @@ function StraightLine(state, transition, curvId) {
         .attr("fill", "none")
         .attr("marker-end", "url(#arrowhead)");
     }
+
   }
 
   var text = svg.append("text").attr("font-size", "12px");
