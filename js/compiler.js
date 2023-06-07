@@ -247,11 +247,11 @@ function next_sym() {
 
 //Syntactic analysis
 
-function testSym(expectedCode) {
-  if (current_sym === expectedCode) {
+function testSym(...args) {
+  if (current_sym === args[0]) {
     current_sym = next_sym();
   } else {
-    showError(expectedCode);
+    showError(...args);
   }
 }
 
@@ -267,7 +267,7 @@ function PROGRAM() {
 function INPUT() {
   if (current_sym === CODE_LEX.INPUT_TOKEN) {
     INPUT_STATEMENT();
-  }
+  }else if(current_sym !== BLANK_TOKEN) showError(INPUT_TOKEN,BLANK_TOKEN);
 }
 
 function INPUT_STATEMENT() {
@@ -319,7 +319,7 @@ function TABLE_ROW() {
   testSym(STATE_ID_TOKEN);
   testSym(OPEN_BRACES_TOKEN);
   TABLE_ROW_BODY();
-  if(current_sym !== CLOSE_BRACES_TOKEN) showError(CLOSE_BRACES_TOKEN,STATE_ID_TOKEN);
+  if(current_sym !== CLOSE_BRACES_TOKEN) showError(CLOSE_BRACES_TOKEN,CHARACTER_TOKEN,OPEN_BRACKET_TOKEN);
   current_sym = next_sym();
 }
 
@@ -387,11 +387,12 @@ function WRITE() {
     testSym(CHARACTER_TOKEN);
     finalStates[currentStateIndex].transitions[currentTransitionIndex].write=input[index-3];
     testSym(COMMA_TOKEN);
-  }
+  }else if(current_sym!==RIGHT_TOKEN && current_sym!==LEFT_TOKEN) showError(WRITE_TOKEN,RIGHT_TOKEN,LEFT_TOKEN);
 }
 
 function ACTION() {
   DIRECTION();
+  testSym(COLON_TOKEN);
   TO_STATE();
 }
 
@@ -408,11 +409,8 @@ function DIRECTION() {
 }
 
 function TO_STATE() {
-  if (current_sym === COLON_TOKEN) {
-    current_sym = next_sym();
     testSym(STATE_ID_TOKEN);
     finalStates[currentStateIndex].transitions[currentTransitionIndex].target=dependingStates[dependingStates.length-1];
-  }
 }
 
 
@@ -456,7 +454,7 @@ function stateChecker(){
       if(dependingState==declarativeState) isDeclared = true ;
       
     });
-    if(isDeclared==false) throw new Error("Semantic error : the state "+dependingState+" is not declared in the transition table !");
+    if(isDeclared==false) throw new Error("Semantic error : the state '"+dependingState+"' is not declared in the transition table !");
   });
 
 }
@@ -524,8 +522,8 @@ function showErrorToken(token) {
     }
   }
 
-  function showError(){
-    S="Syntax error : expected "+showErrorToken(arguments[0]);
-    for(let i=1;i<arguments.length;i++) S+=" or "+showErrorToken(arguments[i]);
-    throw new Error(S+" !");
+  function showError(...args){
+    S="Syntax error : expected "+showErrorToken(args[0]);
+    for(let i=1;i<args.length;i++) S+=" or "+showErrorToken(args[i]);
+    throw new Error(S);
   }
