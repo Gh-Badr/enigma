@@ -49,6 +49,8 @@ function main() {
     currentState = startingState;
 
     //draw the graph
+    memory = [];
+
     drawState(declarativeStates);
     allTransitions = [];
     getAllTransitions();
