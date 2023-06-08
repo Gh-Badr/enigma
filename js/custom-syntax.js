@@ -2,18 +2,18 @@ CodeMirror.defineMode("customMode", function () {
   return {
     token: function (stream) {
       if (
-        stream.match("blank") ||
-        stream.match("input") ||
-        stream.match("startState") ||
-        stream.match("table")
+        stream.match(/blank/i) ||
+        stream.match(/input/i) ||
+        stream.match(/startState/i) ||
+        stream.match(/table/i)
       ) {
         return "style2";
       }
 
       if (
-        stream.match("write") ||
-        stream.match("right") ||
-        stream.match("left")
+        stream.match(/write/i) ||
+        stream.match(/right/i) ||
+        stream.match(/left/i)
       ) {
         return "style1";
       }
