@@ -1,6 +1,13 @@
 # Enigma
 A Turing machine simulator.
 
+### Team Members
+
+- BOUCHAÂRA Aya
+- GHAZAOUI Badr
+- MAROUANE Kamal
+- ZARHOUNI Fatima ezzahrae
+
 ## About the Syntax
 In this simulator, we used a quite simple and restrictive syntax to define the pseudo-code for generating the Turing machines, and it's by definition Turing complete.
 
